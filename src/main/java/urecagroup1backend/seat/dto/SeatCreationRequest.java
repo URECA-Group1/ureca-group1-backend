@@ -1,4 +1,4 @@
-package urecagroup1backend.seat.api.dto;
+package urecagroup1backend.seat.dto;
 
 public record SeatCreationRequest(
         String seatNumber

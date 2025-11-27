@@ -1,4 +1,4 @@
-package urecagroup1backend.seat.api.docs;
+package urecagroup1backend.seat.controller.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import urecagroup1backend.seat.api.dto.SeatCreationRequest;
-import urecagroup1backend.seat.api.dto.SeatEntryResponse;
-import urecagroup1backend.seat.api.dto.SeatResponse;
+import urecagroup1backend.seat.dto.SeatCreationRequest;
+import urecagroup1backend.seat.dto.SeatEntryResponse;
+import urecagroup1backend.seat.dto.SeatResponse;
 
 @Tag(name = "좌석", description = "좌석 입퇴실 및 예약 API")
 public interface SeatControllerDocs {

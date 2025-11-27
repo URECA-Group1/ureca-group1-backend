@@ -1,14 +1,14 @@
-package urecagroup1backend.seat.api;
+package urecagroup1backend.seat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
-import urecagroup1backend.seat.api.docs.SeatControllerDocs;
-import urecagroup1backend.seat.api.dto.SeatCreationRequest;
-import urecagroup1backend.seat.api.dto.SeatEntryResponse;
-import urecagroup1backend.seat.api.dto.SeatResponse;
-import urecagroup1backend.seat.application.service.SeatService;
+import urecagroup1backend.seat.controller.docs.SeatControllerDocs;
+import urecagroup1backend.seat.dto.SeatCreationRequest;
+import urecagroup1backend.seat.dto.SeatEntryResponse;
+import urecagroup1backend.seat.dto.SeatResponse;
+import urecagroup1backend.seat.service.SeatService;
 
 @RestController
 @RequiredArgsConstructor

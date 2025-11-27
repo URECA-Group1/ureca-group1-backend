@@ -1,15 +1,15 @@
-package urecagroup1backend.seat.application.service;
+package urecagroup1backend.seat.service;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import urecagroup1backend.seat.api.dto.SeatEntryResponse;
-import urecagroup1backend.seat.api.dto.SeatResponse;
+import urecagroup1backend.seat.dto.SeatEntryResponse;
+import urecagroup1backend.seat.dto.SeatResponse;
 import urecagroup1backend.seat.domain.Seat;
 import urecagroup1backend.seat.domain.SeatEntry;
-import urecagroup1backend.seat.domain.repository.SeatEntryRepository;
-import urecagroup1backend.seat.domain.repository.SeatRepository;
+import urecagroup1backend.seat.repository.SeatEntryRepository;
+import urecagroup1backend.seat.repository.SeatRepository;
 
 import java.time.LocalDateTime;
 

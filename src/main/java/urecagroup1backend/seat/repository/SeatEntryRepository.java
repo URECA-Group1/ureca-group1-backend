@@ -1,4 +1,4 @@
-package urecagroup1backend.seat.domain.repository;
+package urecagroup1backend.seat.repository;
 
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;

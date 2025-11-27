@@ -1,4 +1,4 @@
-package urecagroup1backend.seat.api.dto;
+package urecagroup1backend.seat.dto;
 
 import urecagroup1backend.seat.domain.SeatEntry;
 
