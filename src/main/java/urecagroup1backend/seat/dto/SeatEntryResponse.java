@@ -12,8 +12,8 @@ public record SeatEntryResponse(
     public static SeatEntryResponse from(SeatEntry seatEntry) {
         return new SeatEntryResponse(
                 seatEntry.getId(),
-                seatEntry.getSeat().getId(),
-                seatEntry.getEntryTime()
+                seatEntry.getSeatId(),
+                seatEntry.getCreatedAt()
         );
     }
 }

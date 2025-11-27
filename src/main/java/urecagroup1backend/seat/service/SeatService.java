@@ -4,6 +4,7 @@ package urecagroup1backend.seat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import urecagroup1backend.seat.domain.EntityStatus;
 import urecagroup1backend.seat.dto.SeatEntryResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
 import urecagroup1backend.seat.domain.Seat;
@@ -25,15 +26,15 @@ public class SeatService {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
 
-        if (seatEntryRepository.findBySeatId(seatId).isPresent()) {
+        if (seatEntryRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE).isPresent()) {
             throw new IllegalStateException("이미 입실된 좌석입니다.");
         }
         // todo: 좌석 예약 확인, 내가 한 예약인지 여부에 따라 진행(10분 내 입실 필요)
 
         SeatEntry seatEntry = SeatEntry.builder()
                 .userId(userId)
-                .seat(seat)
-                .entryTime(LocalDateTime.now())
+                .seatId(seat.getId())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         SeatEntry saved = seatEntryRepository.save(seatEntry);
@@ -45,14 +46,14 @@ public class SeatService {
         seatRepository.findById(seatId)
                 .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
 
-        SeatEntry seatEntry = seatEntryRepository.findBySeatId(seatId)
+        SeatEntry seatEntry = seatEntryRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE)
                 .orElseThrow(() -> new IllegalArgumentException("입실된 좌석을 찾을 수 없습니다."));
 
         if (!seatEntry.getUserId().equals(userId)) {
            throw new IllegalStateException("자신의 좌석만 퇴실할 수 있습니다.");
         }
 
-        seatEntryRepository.delete(seatEntry);
+        seatEntry.delete();
         return SeatEntryResponse.from(seatEntry);
     }
 
