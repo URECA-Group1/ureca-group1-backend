@@ -1,11 +1,11 @@
-package urecagroup1backend.snacks.api.controller;
+package urecagroup1backend.snacks.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import urecagroup1backend.snacks.api.dto.SnackResponse;
-import urecagroup1backend.snacks.application.service.SnacksService;
+import urecagroup1backend.snacks.dto.SnackResponse;
+import urecagroup1backend.snacks.service.SnacksService;
 
 import java.util.List;
 

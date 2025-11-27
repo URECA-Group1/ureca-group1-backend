@@ -1,4 +1,4 @@
-package urecagroup1backend.snacks.api.dto;
+package urecagroup1backend.snacks.dto;
 
 public record SnackResponse(
     Long id,

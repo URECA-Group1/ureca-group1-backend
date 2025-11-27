@@ -1,7 +1,7 @@
-package urecagroup1backend.snacks.application.service;
+package urecagroup1backend.snacks.service;
 
 import org.springframework.stereotype.Service;
-import urecagroup1backend.snacks.api.dto.SnackResponse;
+import urecagroup1backend.snacks.dto.SnackResponse;
 
 import java.util.List;
 
