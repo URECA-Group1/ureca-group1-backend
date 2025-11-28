@@ -1,9 +1,10 @@
 package urecagroup1backend.snacks.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import urecagroup1backend.config.ApiResponse;
+import urecagroup1backend.snacks.api.docs.SnackControllerDocs;
+import urecagroup1backend.snacks.dto.SnackRequest;
 import urecagroup1backend.snacks.dto.SnackResponse;
 import urecagroup1backend.snacks.service.SnacksService;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/snacks")
-public class SnacksController {
+public class SnacksController implements SnackControllerDocs {
 
     private final SnacksService snacksService;
 
@@ -20,9 +21,16 @@ public class SnacksController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<SnackResponse>> getSnacks(){
+    public ApiResponse<List<SnackResponse>> getSnacks(){
         List<SnackResponse> snacks = snacksService.getAllSnacks();
 
-        return ResponseEntity.ok(snacks);
+        return new ApiResponse<>(HttpStatus.OK, "간식 목록 조회 성공",snacks);
+    }
+
+//    @Override
+    @PostMapping
+    public ApiResponse<SnackResponse> createSnack(@RequestBody SnackRequest request) {
+        SnackResponse response = snacksService.createSnack(request);
+        return new ApiResponse<>(HttpStatus.CREATED, "간식 생성 완료", response);
     }
 }
