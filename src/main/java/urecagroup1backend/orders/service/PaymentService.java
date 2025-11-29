@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.orders.dto.PaymentResponse;
-import urecagroup1backend.orders.repository.SnackOrder;
+import urecagroup1backend.orders.domain.SnackOrder;
 import urecagroup1backend.orders.repository.SnackOrderRepository;
 import urecagroup1backend.snacks.repository.Snack;
 import urecagroup1backend.snacks.repository.SnackRepository;

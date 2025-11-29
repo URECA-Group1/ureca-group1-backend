@@ -1,12 +1,11 @@
 package urecagroup1backend.orders.dto;
 
-import urecagroup1backend.orders.repository.SnackOrder;
+import urecagroup1backend.orders.domain.SnackOrder;
 
 import java.time.LocalDateTime;
 
 public record OrderResponse(
     Long orderId,
-    Long userId,
     String snackName,
     int snackPrice,
     String orderStatus,
@@ -16,8 +15,6 @@ public record OrderResponse(
     public static OrderResponse from(SnackOrder order){
         return new OrderResponse(
                 order.getId(),
-//                order.getUser().getId(),
-                null,
                 order.getSnack().getName(),
                 order.getSnack().getPrice(),
                 order.getStatus().name(),
