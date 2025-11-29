@@ -1,2 +1,4 @@
-package urecagroup1backend.orders.service;public class orderService {
+package urecagroup1backend.orders.service;
+
+public class OrderService {
 }
