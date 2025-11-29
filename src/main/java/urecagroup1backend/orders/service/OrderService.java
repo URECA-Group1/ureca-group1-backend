@@ -2,6 +2,7 @@ package urecagroup1backend.orders.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.orders.domain.SnackOrder;
 import urecagroup1backend.orders.dto.OrderResponse;
 import urecagroup1backend.orders.repository.SnackOrderRepository;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
 
     private final SnackOrderRepository snackOrderRepository;
