@@ -1,6 +1,5 @@
 package urecagroup1backend.snacks.dto;
 
-import urecagroup1backend.orders.repository.SnackOrder;
 import urecagroup1backend.snacks.repository.Snack;
 
 public record SnackResponse(

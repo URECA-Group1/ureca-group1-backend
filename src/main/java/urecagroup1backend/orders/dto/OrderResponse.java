@@ -1,6 +1,6 @@
 package urecagroup1backend.orders.dto;
 
-import urecagroup1backend.orders.repository.SnackOrder;
+import urecagroup1backend.orders.domain.SnackOrder;
 
 import java.time.LocalDateTime;
 

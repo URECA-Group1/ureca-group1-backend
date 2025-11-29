@@ -1,4 +1,4 @@
-package urecagroup1backend.orders.repository;
+package urecagroup1backend.orders.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
