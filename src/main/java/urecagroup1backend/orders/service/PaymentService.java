@@ -2,6 +2,7 @@ package urecagroup1backend.orders.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.orders.dto.PaymentResponse;
 import urecagroup1backend.orders.repository.SnackOrder;
 import urecagroup1backend.orders.repository.SnackOrderRepository;
@@ -42,6 +43,7 @@ public class PaymentService {
     }
 
     // 결제 취소
+    @Transactional
     public PaymentResponse cancelPayment(Long snackId) {
         Snack snack = snackRepository.findById(snackId)
                 .orElseThrow(() -> new IllegalArgumentException("간식 없음"));
