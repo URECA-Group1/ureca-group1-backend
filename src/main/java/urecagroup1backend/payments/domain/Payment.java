@@ -1,4 +1,4 @@
-package urecagroup1backend.orders.domain;
+package urecagroup1backend.payments.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,33 +14,33 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-@Table(name ="snack_orders")
-public class SnackOrder {
+@Table(name ="payments")
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
+    @Column(name = "payment_id")
     private Long id;
 /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
-    private User user;
+    private User user; // Member
 */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "snack_id")
     private Snack snack;
 
-    @Column(name = "order_status")
+    @Column(name = "payment_status")
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private PaymentStatus status;
 
     @CreatedDate
-    @Column(name = "order_time")
+    @Column(name = "payment_time")
     private LocalDateTime createdAt;
 
 
-    public enum OrderStatus{
-        COMPLETED,
-        FAIL
+    public enum PaymentStatus{
+        PAID,       // 결제 완료
+        REFUNDED    // 환불 완료
     }
 }
