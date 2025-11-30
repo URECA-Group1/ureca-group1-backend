@@ -47,7 +47,6 @@ spring:
             user-name-attribute: id
 
 jwt:
-# 32글자 이상 인코딩된 문자열 : oauthserversecretaccesstokenoauthserversecretaccesstokenoauthserversecretaccesstoken
   secret: ${JWT_SECRET}
   expiration: 3000 # accessToken 만료 시간 (분 단위)
 
