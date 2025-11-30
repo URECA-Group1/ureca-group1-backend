@@ -20,6 +20,7 @@ public class SnacksController implements SnackControllerDocs {
         this.snacksService = snacksService;
     }
 
+    @Override
     @GetMapping("/list")
     public ApiResponse<List<SnackResponse>> getSnacks(){
         List<SnackResponse> snacks = snacksService.getAllSnacks();
@@ -27,7 +28,8 @@ public class SnacksController implements SnackControllerDocs {
         return new ApiResponse<>(HttpStatus.OK, "간식 목록 조회 성공",snacks);
     }
 
-//    @Override
+
+    @Override
     @PostMapping
     public ApiResponse<SnackResponse> createSnack(@RequestBody SnackRequest request) {
         SnackResponse response = snacksService.createSnack(request);

@@ -19,12 +19,12 @@ public class Snack {
     private Long id;
 
     @Column(name = "name")
-    private String Name;
+    private String name;
 
     @Column(name = "price")
-    private int Price;
+    private int price;
 
     @Column(name = "status")
-    private boolean Status;
+    private boolean status;
 
 }
