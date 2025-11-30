@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import urecagroup1backend.config.ApiResponse;
+import urecagroup1backend.member.controller.docs.MemberControllerDocs;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.domain.SocialType;
 import urecagroup1backend.member.dto.MemberCreateDto;
@@ -28,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/member")
-public class MemberController {
+public class MemberController implements MemberControllerDocs {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
     private final GoogleService googleService;

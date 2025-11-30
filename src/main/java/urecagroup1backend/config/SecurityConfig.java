@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a.requestMatchers(
                         "/member/create", "/member/doLogin",
                                 "/member/google/doLogin", "/member/kakao/doLogin", "/oauth2/**",
-                        "/swagger-ui/**")
+                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
                         .permitAll().anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter : 이 클래스에서 폼 로그인 인증을 처리
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
