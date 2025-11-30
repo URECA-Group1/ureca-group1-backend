@@ -10,12 +10,55 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
     open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 243224992700-pjff0ng98digervts8aeosp5plblkg3b.apps.googleusercontent.com
+            client_secret: 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
+            scope: openid, email, profile
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            authorization-grant-type: authorization_code
+          kakao:
+            client-id: b25cace08aa3bf3857ec62bbf3a04ba2
+            scope: profile_nickname, account_email
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+jwt:
+# 32글자 이상 인코딩된 문자열 : oauthserversecretaccesstokenoauthserversecretaccesstokenoauthserversecretaccesstoken
+  secret: b2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlbm9hdXRoc2VydmVyc2VjcmV0YWNjZXNzdG9rZW5vYXV0aHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
+  expiration: 3000 # accessToken 만료 시간 (분 단위)
+
+oauth:
+  google:
+    client-id: 243224992700-pjff0ng98digervts8aeosp5plblkg3b.apps.googleusercontent.com
+    client_secret: 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
+    redirect_uri: http://localhost:3000/oauth/google/redirect
+  kakao:
+    client-id: b25cace08aa3bf3857ec62bbf3a04ba2
+    redirect-uri: http://localhost:3000/oauth/kakao/redirect
 
 swagger:
   server-url: http://localhost:8080
