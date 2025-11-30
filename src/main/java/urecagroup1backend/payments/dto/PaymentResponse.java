@@ -1,11 +1,9 @@
-package urecagroup1backend.orders.dto;
+package urecagroup1backend.payments.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class PaymentResponse {
     private String result;

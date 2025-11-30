@@ -1,21 +1,22 @@
-package urecagroup1backend.orders.controller;
+package urecagroup1backend.payments.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import urecagroup1backend.orders.dto.PaymentResponse;
-import urecagroup1backend.orders.service.PaymentService;
+import urecagroup1backend.config.ApiResponse;
+import urecagroup1backend.payments.controller.docs.PaymentControllerDocs;
+import urecagroup1backend.payments.dto.PaymentListResponse;
+import urecagroup1backend.payments.dto.PaymentResponse;
+import urecagroup1backend.payments.service.PaymentService;
 
-@Tag(
-        name = "간식 결제",
-        description = "간식 결제 및 결제 취소 API"
-)
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/snacks/payments")
-public class PaymentController {
+public class PaymentController implements PaymentControllerDocs {
 
     private final PaymentService paymentService;
 
@@ -39,5 +40,12 @@ public class PaymentController {
     public PaymentResponse cancelPayment(@Parameter(description = "결제 취소할 간식 ID", required = true)
                                              @PathVariable(name = "snackId") Long snackId) {
         return paymentService.cancelPayment(snackId);
+    }
+
+    @Override
+    @GetMapping
+    public ApiResponse<List<PaymentListResponse>> getPayments() {
+        List<PaymentListResponse> payments = paymentService.getPayments();
+        return new ApiResponse<>(HttpStatus.OK, "주문 내역 조회 성공", payments);
     }
 }
