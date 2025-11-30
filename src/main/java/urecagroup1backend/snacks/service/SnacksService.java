@@ -26,9 +26,9 @@ public class SnacksService {
     @Transactional
     public SnackResponse createSnack(SnackRequest request) {
         Snack snack = Snack.builder()
-                .Name(request.name())
-                .Price(request.price())
-                .Status(request.status())
+                .name(request.name())
+                .price(request.price())
+                .status(request.status())
                 .build();
 
         Snack savedSnack = snackRepository.save(snack);
