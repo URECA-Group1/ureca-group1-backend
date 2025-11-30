@@ -50,6 +50,7 @@ public class PaymentService {
     // 결제 취소
     @Transactional
     public PaymentResponse cancelPayment(Long snackId) {
+
         Snack snack = snackRepository.findById(snackId)
                 .orElseThrow(() -> new IllegalArgumentException("간식 없음"));
 
@@ -62,9 +63,34 @@ public class PaymentService {
     // 간식 주문 내역 조회 (지금은 모든 내역 조회)
     /// JWT 토큰에서 추출한 유저 ID로 조회 수정 필요
     public List<PaymentListResponse> getPayments() {
+
         List<Payment> payments = paymentRepository.findAll();
+
         return payments.stream()
                 .map(PaymentListResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    // 환불
+    @Transactional
+    public void refundPayment(Long orderId) {
+
+        // 기존 결제 내역 조회
+        Payment payment = paymentRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("결제 내역 없음"));
+
+        // 재고 복구
+        Snack snack = payment.getSnack();
+        snack.setStatus(true);
+
+        /// 포인트 환불 로직 (Member 연동 필요)
+
+        // 간식 환불 내역 저장
+        Payment refundPayment = Payment.builder()
+                .snack(snack)
+                .status(Payment.PaymentStatus.REFUNDED)
+                .build();
+
+        paymentRepository.save(refundPayment);
     }
 }
