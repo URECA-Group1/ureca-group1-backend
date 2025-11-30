@@ -19,6 +19,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /* 일반 회원 가입
     public Member create(MemberCreateDto memberCreateDto) {
         Member member = Member.builder()
                 .email(memberCreateDto.getEmail())
@@ -29,7 +30,10 @@ public class MemberService {
         memberRepository.save(member);
         return member;
     }
+    */
 
+
+    /* 일반 로그인
     public Member login(MemberLoginDto memberLoginDto) {
         Optional<Member> optMember = memberRepository.findByEmail(memberLoginDto.getEmail());
 
@@ -44,6 +48,7 @@ public class MemberService {
 
         return member;
     }
+    */
 
     // SocialID로 이미 회원가입 되어 있는지 확인
     public Member getMemberBySocialId(String socialId) {
