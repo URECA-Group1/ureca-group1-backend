@@ -22,13 +22,13 @@ spring:
       client:
         registration:
           google:
-            client-id: 243224992700-pjff0ng98digervts8aeosp5plblkg3b.apps.googleusercontent.com
-            client_secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client_secret: ${GOOGLE_CLIENT_SECRET}
             scope: openid, email, profile
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
           kakao:
-            client-id: b25cace08aa3bf3857ec62bbf3a04ba2
+            client-id: ${KAKAO_CLIENT_ID}
             scope: profile_nickname, account_email
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
@@ -48,16 +48,16 @@ spring:
 
 jwt:
 # 32글자 이상 인코딩된 문자열 : oauthserversecretaccesstokenoauthserversecretaccesstokenoauthserversecretaccesstoken
-  secret: b2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlbm9hdXRoc2VydmVyc2VjcmV0YWNjZXNzdG9rZW5vYXV0aHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
+  secret: ${JWT_SECRET}
   expiration: 3000 # accessToken 만료 시간 (분 단위)
 
 oauth:
   google:
-    client-id: 243224992700-pjff0ng98digervts8aeosp5plblkg3b.apps.googleusercontent.com
-    client_secret: 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
+    client-id: ${GOOGLE_CLIENT_ID}
+    client_secret: ${GOOGLE_CLIENT_SECRET}
     redirect_uri: http://localhost:3000/oauth/google/redirect
   kakao:
-    client-id: b25cace08aa3bf3857ec62bbf3a04ba2
+    client-id: ${KAKAO_CLIENT_ID}
     redirect-uri: http://localhost:3000/oauth/kakao/redirect
 
 swagger:
