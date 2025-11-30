@@ -42,10 +42,19 @@ public class PaymentController implements PaymentControllerDocs {
         return paymentService.cancelPayment(snackId);
     }
 
+    // 결제 내역 조회
     @Override
     @GetMapping
     public ApiResponse<List<PaymentListResponse>> getPayments() {
         List<PaymentListResponse> payments = paymentService.getPayments();
-        return new ApiResponse<>(HttpStatus.OK, "주문 내역 조회 성공", payments);
+        return new ApiResponse<>(HttpStatus.OK, "결제 내역 조회 성공", payments);
+    }
+
+    // 환불
+    @Override
+    @PostMapping("/refund/{orderId}")
+    public ApiResponse<Void> refundPayment(@PathVariable Long orderId) {
+        paymentService.refundPayment(orderId);
+        return new ApiResponse<>(HttpStatus.OK, "포인트가 환불되었습니다.");
     }
 }

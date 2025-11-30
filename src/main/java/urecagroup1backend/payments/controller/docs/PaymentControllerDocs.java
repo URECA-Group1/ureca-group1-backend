@@ -54,4 +54,24 @@ public interface PaymentControllerDocs {
             )
     )
     ApiResponse<List<PaymentListResponse>> getPayments();
+
+    @Operation(
+            summary = "간식 환불",
+            description = "특정 간식 결제를 환불합니다. 간식 재고가 복구되고 포인트가 환불됩니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "환불 성공",
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                                {
+                                  "status": 200,
+                                  "message": "포인트가 환불되었습니다."
+                                }
+                                """
+                    )
+            )
+    )
+    ApiResponse<Void> refundPayment(Long orderId);
 }
