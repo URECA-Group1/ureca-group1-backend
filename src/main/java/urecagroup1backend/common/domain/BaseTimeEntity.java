@@ -3,6 +3,7 @@ package urecagroup1backend.common.domain;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 public class BaseTimeEntity {
     @CreationTimestamp
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
 
-    @CreationTimestamp
-    private LocalDateTime updatedTime;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
