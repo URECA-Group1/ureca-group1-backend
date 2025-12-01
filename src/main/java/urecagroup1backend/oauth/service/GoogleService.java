@@ -14,13 +14,13 @@ import urecagroup1backend.oauth.dto.GoogleProfileDto;
 @Transactional
 public class GoogleService {
 
-    @Value("${oauth.google.client-id}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
-    @Value("${oauth.google.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.google.client_secret}")
     private String googleClientSecret;
 
-    @Value("${oauth.google.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String googleRedirectUri;
 
     public AccessTokenDto getAccessToken(String code) {
