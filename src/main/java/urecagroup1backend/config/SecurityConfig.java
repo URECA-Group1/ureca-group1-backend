@@ -49,9 +49,9 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 특정 url 패턴에 대해서는 인증처리 (Authentication 객체 생성) 제외
                 .authorizeHttpRequests(a -> a.requestMatchers(
-                        "/member/create", "/member/doLogin",
+                                "/member/create", "/member/doLogin",
                                 "/member/google/doLogin", "/member/kakao/doLogin", "/oauth2/**",
-                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
+                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
                         .permitAll().anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter : 이 클래스에서 폼 로그인 인증을 처리
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
