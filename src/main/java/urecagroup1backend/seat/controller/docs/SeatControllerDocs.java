@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.seat.dto.SeatCreationRequest;
-import urecagroup1backend.seat.dto.SeatEntryResponse;
+import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
 
 @Tag(name = "좌석", description = "좌석 입퇴실 및 예약 API")
@@ -41,7 +41,7 @@ public interface SeatControllerDocs {
                     )
             )
     )
-    urecagroup1backend.config.ApiResponse<SeatEntryResponse> entry(
+    urecagroup1backend.config.ApiResponse<SeatReservationResponse> entry(
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     );
@@ -72,7 +72,7 @@ public interface SeatControllerDocs {
                     )
             )
     )
-    urecagroup1backend.config.ApiResponse<SeatEntryResponse> exitSeat(
+    urecagroup1backend.config.ApiResponse<SeatReservationResponse> exitSeat(
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     );

@@ -8,7 +8,7 @@ import urecagroup1backend.config.ApiResponse;
 import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.seat.controller.docs.SeatControllerDocs;
 import urecagroup1backend.seat.dto.SeatCreationRequest;
-import urecagroup1backend.seat.dto.SeatEntryResponse;
+import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
 import urecagroup1backend.seat.service.SeatService;
 
@@ -19,21 +19,21 @@ public class SeatController implements SeatControllerDocs {
 
     @Override
     @PostMapping("/api/seats/{seatId}/entry")
-    public ApiResponse<SeatEntryResponse> entry(
+    public ApiResponse<SeatReservationResponse> entry(
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        SeatEntryResponse response = seatService.entry(seatId, user.getId());
+        SeatReservationResponse response = seatService.entry(seatId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "좌석 입실 성공", response);
     }
 
     @Override
     @PostMapping("/api/seats/{seatId}/exit")
-    public ApiResponse<SeatEntryResponse> exitSeat(
+    public ApiResponse<SeatReservationResponse> exitSeat(
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        SeatEntryResponse response = seatService.exitSeat(seatId, user.getId());
+        SeatReservationResponse response = seatService.exitSeat(seatId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "좌석 퇴실 완료", response);
     }
 
