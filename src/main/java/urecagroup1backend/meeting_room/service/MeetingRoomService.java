@@ -9,6 +9,8 @@ import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
 import urecagroup1backend.meeting_room.repository.MeetingRoomRepository;
 import urecagroup1backend.meeting_room.repository.MeetingRoomReservationRepository;
+import urecagroup1backend.member.domain.Member;
+import urecagroup1backend.member.repository.MemberRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public class MeetingRoomService {
 
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomReservationRepository reservationRepository;
+    private final MemberRepository memberRepository;
 
     public List<MeetingRoomResponse> getAvailableRooms() {
         return meetingRoomRepository.findByAvailable(true)
@@ -32,7 +35,7 @@ public class MeetingRoomService {
     }
 
     @Transactional
-    public ReservationResponse enterReservationPage(Long meetingRoomId) {
+    public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
         MeetingRoom meetingRoom = meetingRoomRepository.findById(meetingRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("회의실을 찾을 수 없습니다."));
 
@@ -44,8 +47,12 @@ public class MeetingRoomService {
             throw new IllegalStateException("이미 예약된 회의실입니다.");
         }
 
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
         MeetingRoomReservation reservation = MeetingRoomReservation.builder()
                 .meetingRoom(meetingRoom)
+                .member(member)
                 .status(MeetingRoomReservation.ReservationStatus.PENDING)
                 .build();
 
@@ -54,7 +61,7 @@ public class MeetingRoomService {
     }
 
     @Transactional
-    public ReservationResponse completeReservation(Long reservationId, String phoneNumber) {
+    public ReservationResponse completeReservation(Long reservationId, String email, String phoneNumber) {
         MeetingRoomReservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
 
@@ -62,7 +69,10 @@ public class MeetingRoomService {
             throw new IllegalStateException("예약 완료할 수 없는 상태입니다.");
         }
 
-        reservation.completeReservation(phoneNumber);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        reservation.completeReservation(member, phoneNumber);
         return ReservationResponse.from(reservation);
     }
 

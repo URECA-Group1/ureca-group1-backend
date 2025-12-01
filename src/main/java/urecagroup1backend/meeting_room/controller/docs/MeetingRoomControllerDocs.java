@@ -1,6 +1,7 @@
 package urecagroup1backend.meeting_room.controller.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,6 +12,7 @@ import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
 import urecagroup1backend.meeting_room.dto.ReservationRequest;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "회의실", description = "회의실 예약 관리 API")
@@ -48,7 +50,7 @@ public interface MeetingRoomControllerDocs {
 
     @Operation(
             summary = "예약 페이지 진입",
-            description = "회의실 ID로 예약 페이지에 진입합니다. PENDING 상태의 예약이 생성되며, 다른 사용자가 조회할 때 이미 예약된 것처럼 보입니다."
+            description = "회의실 ID로 예약 페이지에 진입합니다. PENDING 상태의 예약이 생성되며, 인증된 사용자의 정보가 예약에 저장됩니다. 다른 사용자가 조회할 때 이미 예약된 것처럼 보입니다."
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "201",
@@ -71,12 +73,13 @@ public interface MeetingRoomControllerDocs {
             )
     )
     urecagroup1backend.config.ApiResponse<ReservationResponse> enterReservationPage(
-            @PathVariable Long meetingRoomId
+            @PathVariable Long meetingRoomId,
+            @Parameter(hidden = true) Principal principal
     );
 
     @Operation(
             summary = "예약 완료",
-            description = "예약 ID와 전화번호를 입력하여 예약을 완료합니다. PENDING 상태의 예약이 ACTIVE 상태로 변경됩니다."
+            description = "예약 ID와 전화번호를 입력하여 예약을 완료합니다. PENDING 상태의 예약이 ACTIVE 상태로 변경됩니다. 인증된 사용자의 정보가 예약에 저장됩니다."
     )
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "예약 완료 요청 정보",
@@ -114,7 +117,8 @@ public interface MeetingRoomControllerDocs {
     )
     urecagroup1backend.config.ApiResponse<ReservationResponse> completeReservation(
             @PathVariable Long reservationId,
-            @RequestBody ReservationRequest request
+            @RequestBody ReservationRequest request,
+            @Parameter(hidden = true) Principal principal
     );
 
     @Operation(
