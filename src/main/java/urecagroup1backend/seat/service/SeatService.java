@@ -15,6 +15,7 @@ import urecagroup1backend.seat.repository.SeatRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +98,28 @@ public class SeatService {
     }
 
     // 입실
+    public SeatResponse enterSeat(Long seatId, Long userId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
+
+        // 현재 좌석의 예약 내역 확인
+        Optional<SeatReservation> seatReservation = seatReservationRepository.findFirstBySeatIdAndStatus(seatId, false);
+
+        // 좌석이 예약 되어 있고
+        // 예약자 id가 내 id가 다르면 => 다른 사람이 예약한 좌석
+        if(seat.getSeatStatus() == SeatStatus.RESERVED && seatReservation.isPresent() && !seatReservation.get().getUserId().equals(userId)) {
+            throw new IllegalStateException("이미 다른 사람이 예약한 좌석입니다.");
+        }
+
+        if(seat.getSeatStatus() == SeatStatus.USED) {
+            throw new IllegalStateException("이미 입실 중인 좌석입니다.");
+        }
+
+        // 입실 중 상태로 변경
+        seat.use();
+
+        return SeatResponse.from(seat);
+    }
 
     // 퇴실
 
