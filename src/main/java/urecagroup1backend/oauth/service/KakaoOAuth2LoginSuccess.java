@@ -52,7 +52,7 @@ public class KakaoOAuth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         }
 
         // 3. jwt 토큰 생성 및 전달
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getName());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getId(), member.getName());
 
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setPath("/");

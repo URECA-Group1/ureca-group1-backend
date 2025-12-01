@@ -3,12 +3,11 @@ package urecagroup1backend.member.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
 import urecagroup1backend.member.controller.docs.MemberControllerDocs;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.domain.SocialType;
 import urecagroup1backend.member.dto.MemberCreateDto;
@@ -81,7 +80,7 @@ public class MemberController implements MemberControllerDocs {
         }
 
         // 회원 가입 되어 있는 회원이면 토큰 발급
-        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getName());
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getId(), originalMember.getName());
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalMember.getId());
@@ -106,13 +105,24 @@ public class MemberController implements MemberControllerDocs {
         }
 
         // 회원 가입 되어 있는 회원이면 토큰 발급
-        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getName());
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getId(), originalMember.getName());
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalMember.getId());
         loginInfo.put("token", jwtToken);
 
         return new ApiResponse<>(HttpStatus.OK, "카카오 로그인에 성공했습니다.", loginInfo);
+    }
+
+    // 내 로그인 정보 가져오기
+    @GetMapping("/me")
+    public ApiResponse<?> me(@AuthenticationPrincipal CustomUserDetails user) {
+        Map<String, Object> loginInfo = new HashMap<>();
+        loginInfo.put("id", user.getId());
+        loginInfo.put("email", user.getEmail());
+        loginInfo.put("name", user.getName());
+
+        return new ApiResponse<>(HttpStatus.OK, "내 로그인 정보", loginInfo);
     }
 
 

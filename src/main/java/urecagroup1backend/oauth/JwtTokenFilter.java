@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import urecagroup1backend.member.domain.CustomUserDetails;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,10 +49,21 @@ public class JwtTokenFilter extends GenericFilter {
                         .parseClaimsJws(jwtToken)
                         .getBody();
 
+                // 현재 로그인한 유저의 id, 이메일, 이름 추출
+                Long id = claims.get("id", Long.class);
+                String email = claims.getSubject();
+                String name = claims.get("name", String.class);
+
+                // CustomUserDetails 생성
+                CustomUserDetails userDetails = CustomUserDetails.builder()
+                        .id(id)
+                        .email(email)
+                        .name(name)
+                        .build();
+
                 // Authentication 객체 생성
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
-                UserDetails userDetails = new User(claims.getSubject(), "", authorities);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, jwtToken, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
