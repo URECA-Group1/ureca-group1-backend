@@ -1,9 +1,6 @@
-package urecagroup1backend.meeting_room.api.dto;
+package urecagroup1backend.meeting_room.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
-
-import java.time.LocalDateTime;
 
 public record ReservationResponse(
         Long id,
