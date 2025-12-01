@@ -24,13 +24,4 @@ public class OrderController implements OrderControllerDocs {
         OrderResponse response = orderService.enterOrder(snackId);
         return new ApiResponse<>(HttpStatus.CREATED, "구매 진입 성공", response);
     }
-
-    @Override
-    @PostMapping("/{snackId}/cancel")
-    public ApiResponse<Void> cancelOrder(@PathVariable Long snackId) {
-
-        orderService.cancelOrder(snackId);
-
-        return new ApiResponse<>(HttpStatus.OK, "주문 취소 및 재고 복구 완료");
-    }
 }

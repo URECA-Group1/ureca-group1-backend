@@ -35,6 +35,7 @@ public class Order {
     private LocalDateTime createdAt;
 
     public enum OrderStatus {
+        PENDING, // 대기중
         COMPLETED, //  주문 완료
         FAIL,      // 실패
     }

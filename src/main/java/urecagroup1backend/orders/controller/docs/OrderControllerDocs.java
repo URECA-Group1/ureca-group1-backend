@@ -63,8 +63,4 @@ public interface OrderControllerDocs {
     urecagroup1backend.config.ApiResponse<OrderResponse> enterOrder(
             @PathVariable Long snackId
     );
-    @Operation(summary = "주문 취소", description = "주문를 취소하거나 실패했을 때, 간식의 재고를 다시 판매중으로 복구합니다.")
-    @ApiResponse(responseCode = "200", description = "재고 복구 성공")
-    @PostMapping("/{snackId}/cancel")
-    urecagroup1backend.config.ApiResponse<Void> cancelOrder(@PathVariable Long snackId);
 }

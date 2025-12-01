@@ -32,18 +32,12 @@ public class OrderService {
 
         Order order = Order.builder()
                 .snack(snack)
-                .status(Order.OrderStatus.COMPLETED) // 아직 결제 전이니까 PENDING
+                .status(Order.OrderStatus.COMPLETED)
                 // .user(user)
                 .build();
 
         Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
-    }
-
-    @Transactional
-    public void cancelOrder(Long snackId){
-        // 간식 재고 복구 (품절 -> 판매중)
-        snackRepository.updateStatus(snackId);
     }
 }
