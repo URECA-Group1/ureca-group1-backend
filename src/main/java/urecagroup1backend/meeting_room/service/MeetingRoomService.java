@@ -3,6 +3,7 @@ package urecagroup1backend.meeting_room.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -23,6 +24,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
+    private final DistributedLock distributedLock;
 
     public List<MeetingRoomResponse> getAvailableRooms() {
         return meetingRoomRepository.findByAvailable(true)
@@ -36,6 +38,15 @@ public class MeetingRoomService {
 
     @Transactional
     public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
+        String lockKey = "meeting-room:reservation:" + meetingRoomId;
+
+        return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
+            return createReservation(meetingRoomId, email);
+        });
+    }
+
+    @Transactional
+    public ReservationResponse createReservation(Long meetingRoomId, String email) {
         MeetingRoom meetingRoom = meetingRoomRepository.findById(meetingRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("회의실을 찾을 수 없습니다."));
 
