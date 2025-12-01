@@ -53,7 +53,8 @@ public class PaymentController implements PaymentControllerDocs {
     // 환불
     @Override
     @PostMapping("/refund/{orderId}")
-    public ApiResponse<Void> refundPayment(@PathVariable Long orderId) {
+    public ApiResponse<Void> refundPayment(@Parameter(name = "orderId", description = "환불할 주문 ID", required = true)
+                                               @PathVariable("orderId") Long orderId) {
         paymentService.refundPayment(orderId);
         return new ApiResponse<>(HttpStatus.OK, "포인트가 환불되었습니다.");
     }
