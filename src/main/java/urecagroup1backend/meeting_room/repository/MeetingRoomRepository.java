@@ -1,4 +1,4 @@
-package urecagroup1backend.meeting_room.domain.repository;
+package urecagroup1backend.meeting_room.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package urecagroup1backend.meeting_room.api.docs;
+package urecagroup1backend.meeting_room.controller.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import urecagroup1backend.meeting_room.api.dto.MeetingRoomResponse;
-import urecagroup1backend.meeting_room.api.dto.ReservationRequest;
-import urecagroup1backend.meeting_room.api.dto.ReservationResponse;
+import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
+import urecagroup1backend.meeting_room.dto.ReservationRequest;
+import urecagroup1backend.meeting_room.dto.ReservationResponse;
 
 import java.util.List;
 

@@ -1,15 +1,15 @@
-package urecagroup1backend.meeting_room.api;
+package urecagroup1backend.meeting_room.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
-import urecagroup1backend.meeting_room.api.docs.MeetingRoomControllerDocs;
-import urecagroup1backend.meeting_room.api.dto.MeetingRoomResponse;
-import urecagroup1backend.meeting_room.api.dto.ReservationRequest;
-import urecagroup1backend.meeting_room.api.dto.ReservationResponse;
-import urecagroup1backend.meeting_room.application.service.MeetingRoomService;
+import urecagroup1backend.meeting_room.controller.docs.MeetingRoomControllerDocs;
+import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
+import urecagroup1backend.meeting_room.dto.ReservationRequest;
+import urecagroup1backend.meeting_room.dto.ReservationResponse;
+import urecagroup1backend.meeting_room.service.MeetingRoomService;
 
 @RestController
 @RequiredArgsConstructor

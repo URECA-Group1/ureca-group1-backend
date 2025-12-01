@@ -1,4 +1,4 @@
-package urecagroup1backend.meeting_room.api.dto;
+package urecagroup1backend.meeting_room.dto;
 
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 

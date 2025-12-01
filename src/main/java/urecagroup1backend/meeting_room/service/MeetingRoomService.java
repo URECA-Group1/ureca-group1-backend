@@ -1,14 +1,14 @@
-package urecagroup1backend.meeting_room.application.service;
+package urecagroup1backend.meeting_room.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
-import urecagroup1backend.meeting_room.api.dto.MeetingRoomResponse;
-import urecagroup1backend.meeting_room.api.dto.ReservationResponse;
-import urecagroup1backend.meeting_room.domain.repository.MeetingRoomRepository;
-import urecagroup1backend.meeting_room.domain.repository.MeetingRoomReservationRepository;
+import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
+import urecagroup1backend.meeting_room.dto.ReservationResponse;
+import urecagroup1backend.meeting_room.repository.MeetingRoomRepository;
+import urecagroup1backend.meeting_room.repository.MeetingRoomReservationRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
