@@ -1,15 +1,16 @@
-package urecagroup1backend.meeting_room.api;
+package urecagroup1backend.meeting_room.controller;
 
+import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
-import urecagroup1backend.meeting_room.api.docs.MeetingRoomControllerDocs;
-import urecagroup1backend.meeting_room.api.dto.MeetingRoomResponse;
-import urecagroup1backend.meeting_room.api.dto.ReservationRequest;
-import urecagroup1backend.meeting_room.api.dto.ReservationResponse;
-import urecagroup1backend.meeting_room.application.service.MeetingRoomService;
+import urecagroup1backend.meeting_room.controller.docs.MeetingRoomControllerDocs;
+import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
+import urecagroup1backend.meeting_room.dto.ReservationRequest;
+import urecagroup1backend.meeting_room.dto.ReservationResponse;
+import urecagroup1backend.meeting_room.service.MeetingRoomService;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,8 +28,11 @@ public class MeetingRoomController implements MeetingRoomControllerDocs {
 
     @Override
     @PostMapping("/{meetingRoomId}/reservation-page")
-    public ApiResponse<ReservationResponse> enterReservationPage(@PathVariable Long meetingRoomId) {
-        ReservationResponse response = meetingRoomService.enterReservationPage(meetingRoomId);
+    public ApiResponse<ReservationResponse> enterReservationPage(
+            @PathVariable Long meetingRoomId,
+            Principal principal) {
+        String email = principal.getName();
+        ReservationResponse response = meetingRoomService.enterReservationPage(meetingRoomId, email);
         return new ApiResponse<>(HttpStatus.CREATED, "예약 페이지 진입 성공", response);
     }
 
@@ -36,8 +40,10 @@ public class MeetingRoomController implements MeetingRoomControllerDocs {
     @PostMapping("/reservations/{reservationId}/complete")
     public ApiResponse<ReservationResponse> completeReservation(
             @PathVariable Long reservationId,
-            @RequestBody ReservationRequest request) {
-        ReservationResponse response = meetingRoomService.completeReservation(reservationId, request.phoneNumber());
+            @RequestBody ReservationRequest request,
+            Principal principal) {
+        String email = principal.getName();
+        ReservationResponse response = meetingRoomService.completeReservation(reservationId, email, request.phoneNumber());
         return new ApiResponse<>(HttpStatus.OK, "예약 완료", response);
     }
 

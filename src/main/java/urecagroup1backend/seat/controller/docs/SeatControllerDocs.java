@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.seat.dto.SeatCreationRequest;
 import urecagroup1backend.seat.dto.SeatEntryResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
@@ -40,7 +42,8 @@ public interface SeatControllerDocs {
             )
     )
     urecagroup1backend.config.ApiResponse<SeatEntryResponse> entry(
-            @PathVariable Long seatId
+            @PathVariable Long seatId,
+            @AuthenticationPrincipal CustomUserDetails user
     );
 
     @Operation(
@@ -70,7 +73,8 @@ public interface SeatControllerDocs {
             )
     )
     urecagroup1backend.config.ApiResponse<SeatEntryResponse> exitSeat(
-            @PathVariable Long seatId
+            @PathVariable Long seatId,
+            @AuthenticationPrincipal CustomUserDetails user
     );
 
     @Operation(

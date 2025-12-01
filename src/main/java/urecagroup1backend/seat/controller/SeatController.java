@@ -2,8 +2,10 @@ package urecagroup1backend.seat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.seat.controller.docs.SeatControllerDocs;
 import urecagroup1backend.seat.dto.SeatCreationRequest;
 import urecagroup1backend.seat.dto.SeatEntryResponse;
@@ -17,19 +19,21 @@ public class SeatController implements SeatControllerDocs {
 
     @Override
     @PostMapping("/api/seats/{seatId}/entry")
-    public ApiResponse<SeatEntryResponse> entry(@PathVariable Long seatId) {
-        // todo: userId 받아서 내려주기
-        Long userId = 0L;
-        SeatEntryResponse response = seatService.entry(seatId, userId);
+    public ApiResponse<SeatEntryResponse> entry(
+            @PathVariable Long seatId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        SeatEntryResponse response = seatService.entry(seatId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "좌석 입실 성공", response);
     }
 
     @Override
     @PostMapping("/api/seats/{seatId}/exit")
-    public ApiResponse<SeatEntryResponse> exitSeat(@PathVariable Long seatId) {
-        // todo: 로그인 유저의 userId 받아서 내려주기
-        Long userId = 0L;
-        SeatEntryResponse response = seatService.exitSeat(seatId, userId);
+    public ApiResponse<SeatEntryResponse> exitSeat(
+            @PathVariable Long seatId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        SeatEntryResponse response = seatService.exitSeat(seatId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "좌석 퇴실 완료", response);
     }
 

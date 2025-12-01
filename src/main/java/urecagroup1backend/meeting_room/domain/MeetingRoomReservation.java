@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import urecagroup1backend.member.domain.Member;
 
 import java.time.LocalDateTime;
 
@@ -23,13 +24,18 @@ public class MeetingRoomReservation {
     @JoinColumn(name = "meeting_room_id", nullable = false)
     private MeetingRoom meetingRoom;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status;
 
-    public void completeReservation(String phoneNumber) {
+    public void completeReservation(Member member, String phoneNumber) {
+        this.member = member;
         this.phoneNumber = phoneNumber;
         this.status = ReservationStatus.ACTIVE;
     }
