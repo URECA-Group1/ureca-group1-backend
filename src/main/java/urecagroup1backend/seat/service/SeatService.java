@@ -122,43 +122,76 @@ public class SeatService {
     }
 
     // 퇴실
-
-
-    @Transactional
-    public SeatReservationResponse entry(Long seatId, Long userId) {
+    public SeatResponse exitSeat(Long seatId, Long userId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
 
-        if (seatReservationRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE).isPresent()) {
-            throw new IllegalStateException("이미 입실된 좌석입니다.");
-        }
-        // todo: 좌석 예약 확인, 내가 한 예약인지 여부에 따라 진행(10분 내 입실 필요)
 
-        SeatReservation seatReservation = SeatReservation.builder()
-                .userId(userId)
-                .seatId(seat.getId())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        SeatReservation saved = seatReservationRepository.save(seatReservation);
-        return SeatReservationResponse.from(saved);
-    }
-
-    @Transactional
-    public SeatReservationResponse exitSeat(Long seatId, Long userId) {
-        seatRepository.findById(seatId)
-                .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
-
-        SeatReservation seatReservation = seatReservationRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE)
+        SeatReservation seatReservation = seatReservationRepository.findFirstBySeatIdAndStatus(seatId, false)
                 .orElseThrow(() -> new IllegalArgumentException("입실된 좌석을 찾을 수 없습니다."));
 
         if (!seatReservation.getUserId().equals(userId)) {
-           throw new IllegalStateException("자신의 좌석만 퇴실할 수 있습니다.");
+            throw new IllegalStateException("자신의 좌석만 퇴실할 수 있습니다.");
         }
 
-        seatReservation.delete();
-        return SeatReservationResponse.from(seatReservation);
+//        seatReservation.delete();
+//        return SeatReservationResponse.from(seatReservation);
+//
+//        // 현재 좌석의 예약 내역 확인
+//        Optional<SeatReservation> seatReservation = seatReservationRepository.findFirstBySeatIdAndStatus(seatId, false);
+//
+//        // 좌석이 예약 되어 있고
+//        // 예약자 id가 내 id가 다르면 => 다른 사람이 예약한 좌석
+//        if(seat.getSeatStatus() == SeatStatus.RESERVED && seatReservation.isPresent() && !seatReservation.get().getUserId().equals(userId)) {
+//            throw new IllegalStateException("이미 다른 사람이 예약한 좌석입니다.");
+//        }
+//
+//        if(seat.getSeatStatus() == SeatStatus.USED) {
+//            throw new IllegalStateException("이미 입실 중인 좌석입니다.");
+//        }
+//
+//        // 입실 중 상태로 변경
+//        seat.use();
+
+        return SeatResponse.from(seat);
     }
+
+
+//    @Transactional
+//    public SeatReservationResponse entry(Long seatId, Long userId) {
+//        Seat seat = seatRepository.findById(seatId)
+//                .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
+//
+//        if (seatReservationRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE).isPresent()) {
+//            throw new IllegalStateException("이미 입실된 좌석입니다.");
+//        }
+//        // todo: 좌석 예약 확인, 내가 한 예약인지 여부에 따라 진행(10분 내 입실 필요)
+//
+//        SeatReservation seatReservation = SeatReservation.builder()
+//                .userId(userId)
+//                .seatId(seat.getId())
+//                .createdAt(LocalDateTime.now())
+//                .build();
+//
+//        SeatReservation saved = seatReservationRepository.save(seatReservation);
+//        return SeatReservationResponse.from(saved);
+//    }
+
+//    @Transactional
+//    public SeatReservationResponse exitSeat(Long seatId, Long userId) {
+//        seatRepository.findById(seatId)
+//                .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다."));
+//
+//        SeatReservation seatReservation = seatReservationRepository.findBySeatIdAndStatus(seatId, EntityStatus.ACTIVE)
+//                .orElseThrow(() -> new IllegalArgumentException("입실된 좌석을 찾을 수 없습니다."));
+//
+//        if (!seatReservation.getUserId().equals(userId)) {
+//           throw new IllegalStateException("자신의 좌석만 퇴실할 수 있습니다.");
+//        }
+//
+//        seatReservation.delete();
+//        return SeatReservationResponse.from(seatReservation);
+//    }
 
     @Transactional
     public SeatResponse createSeat(String seatNumber) {
