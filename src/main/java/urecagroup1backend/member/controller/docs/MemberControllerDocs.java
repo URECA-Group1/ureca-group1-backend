@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.oauth.dto.RedirectDto;
 
 import java.util.Map;
@@ -66,4 +68,34 @@ public interface MemberControllerDocs {
             @Schema(description = "카카오 리디렉션 코드 정보", implementation = RedirectDto.class)
             RedirectDto redirectDto
     );
+
+    @Operation(
+            summary = "내 로그인 정보 조회",
+            description = "현재 로그인한 사용자의 ID, 이메일, 이름 정보를 조회합니다. JWT 토큰을 통해 인증된 사용자만 접근 가능합니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "로그인 정보 조회 성공",
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                                    {
+                                      "status": 200,
+                                      "message": "내 로그인 정보",
+                                      "data": {
+                                        "id": 1,
+                                        "email": "user@example.com",
+                                        "name": "홍길동"
+                                      }
+                                    }
+                                    """
+                    )
+            )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "401",
+            description = "인증 실패: 토큰 없음 혹은 잘못된 토큰"
+    )
+    urecagroup1backend.config.ApiResponse<?> me(@AuthenticationPrincipal CustomUserDetails user);
 }
+

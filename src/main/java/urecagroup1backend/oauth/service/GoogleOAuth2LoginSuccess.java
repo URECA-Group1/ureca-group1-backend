@@ -44,7 +44,7 @@ public class GoogleOAuth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         }
 
         // jwt 토큰 생성
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getName());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getId(), member.getName());
 
         // 클라이언트 redirect 방식으로 토큰 전달
         // response.sendRedirect("http://localhost:3000?token=" + jwtToken);
