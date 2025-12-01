@@ -10,7 +10,7 @@ import urecagroup1backend.seat.domain.EntityStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor
-//@Data
+@Data
 @Builder
 @Entity
 public class SeatReservation extends BaseTimeEntity {

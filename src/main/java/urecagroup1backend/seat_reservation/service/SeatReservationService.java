@@ -24,12 +24,6 @@ public class SeatReservationService {
     private final SeatRepository seatRepository; // 좌석 정보
     private final SeatEntryRepository seatEntryRepository; // 입실 정보
 
-    // 내 예약 내역 조회
-//    public List<SeatReservationResDto> getMyReservation(Long userId) {
-//        if()
-//    }
-
-
     // 좌석 예약
     public SeatReservationResDto reserveSeat(Long seatId, Long userId) {
 
