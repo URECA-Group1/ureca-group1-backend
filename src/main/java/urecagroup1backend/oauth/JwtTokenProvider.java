@@ -25,9 +25,10 @@ public class JwtTokenProvider {
         this.SECRET_KEY = new SecretKeySpec(Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
     }
 
-    public String createToken(String email, String name) {
+    public String createToken(String email, Long id, String name) {
         // claims는 jwt 토큰의 playload 부분을 의미
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("id", id);
         claims.put("name", name);
 
         Date now = new Date();
