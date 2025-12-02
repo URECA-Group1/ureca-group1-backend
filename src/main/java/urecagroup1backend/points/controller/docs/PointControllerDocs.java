@@ -47,6 +47,19 @@ public interface PointControllerDocs {
             summary = "포인트 충전",
             description = "입력한 금액만큼 포인트를 충전합니다."
     )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "충전할 포인트 금액을 입력합니다. 최소 1 이상.",
+            required = true,
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                               {
+                                 "amount": 2000
+                               }
+                               """
+                    )
+            )
+    )
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "포인트 충전 완료",

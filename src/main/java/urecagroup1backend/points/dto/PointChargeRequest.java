@@ -19,6 +19,6 @@ import lombok.NoArgsConstructor;
 public class PointChargeRequest {
 
     @NotNull
-    @Min(1) // 최소 1포인트 이상 충전
+    @Min(value=1, message="충전 금액은 1 이상이어야 합니다.") // 최소 1포인트 이상 충전
     private Long amount;
 }
