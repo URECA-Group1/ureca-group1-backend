@@ -15,7 +15,7 @@ public class PointService {
     private final PointRepository pointRepository;
 
     public PointResponse getPoints(Long userId) {
-        Point point = pointRepository.findByUserId(userId)
+        Point point = pointRepository.findByMember_Id(userId)
                 .orElseThrow(() -> new IllegalArgumentException("포인트 정보 없음"));
 
         return new PointResponse(point.getPoint());
