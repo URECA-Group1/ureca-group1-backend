@@ -43,7 +43,4 @@ public class Member {
     private SocialType socialType;
 
     private String socialId;
-
-    @Builder.Default
-    private Long point = 0L;
 }

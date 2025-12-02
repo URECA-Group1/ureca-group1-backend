@@ -1,5 +1,7 @@
 package urecagroup1backend.seat.dto;
 
+// 좌석 생성 Dto
+
 public record SeatCreationRequest(
         String seatNumber
 ) {

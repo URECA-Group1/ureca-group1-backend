@@ -3,6 +3,7 @@ package urecagroup1backend.seat.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import urecagroup1backend.seat.domain.Seat;
+import urecagroup1backend.seat.domain.SeatStatus;
 
 import java.util.Optional;
 
