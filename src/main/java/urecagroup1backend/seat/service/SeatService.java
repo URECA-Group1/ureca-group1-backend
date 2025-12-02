@@ -170,12 +170,15 @@ public class SeatService {
         seat.use();
 
         // 입실 내역 SeatReservation 생성
-        SeatReservation enterReservation = SeatReservation.builder()
-                .seatId(seatId)
-                .userId(userId)
-                .build();
+        if(seatReservation.isEmpty()) {
+            SeatReservation enterReservation = SeatReservation.builder()
+                    .seatId(seatId)
+                    .userId(userId)
+                    .build();
 
-        seatReservationRepository.save(enterReservation);
+            seatReservationRepository.save(enterReservation);
+        }
+
 
         return SeatResponse.from(seat);
     }
