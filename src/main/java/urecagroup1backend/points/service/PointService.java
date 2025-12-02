@@ -1,3 +1,10 @@
+/*
+@file FileName.java
+@author 홍길동
+@version 1.0
+@since 2025-01-01
+@description 이 파일은 ~ 기능을 수행하는 클래스입니다.
+*/
 package urecagroup1backend.points.service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,12 +18,12 @@ import urecagroup1backend.points.repository.PointRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 조회 전용 트랜잭션
 public class PointService {
 
     private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public PointResponse getPoints(Long userId) {
         // Member 먼저 조회
         Member member = memberRepository.findById(userId)
