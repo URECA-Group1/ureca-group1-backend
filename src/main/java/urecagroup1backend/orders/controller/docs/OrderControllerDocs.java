@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.orders.dto.OrderResponse;
 
 import java.util.List;
@@ -64,8 +64,10 @@ public interface OrderControllerDocs {
                     )
             )
     )
+        // [수정됨] User 파라미터 추가 + Swagger에서 숨김 처리
     urecagroup1backend.config.ApiResponse<OrderResponse> enterOrder(
-            @PathVariable Long snackId
+            @PathVariable Long snackId,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
 
     @Operation(
@@ -116,8 +118,10 @@ public interface OrderControllerDocs {
                     )
             )
     )
+        // [수정됨] User 파라미터 추가
     urecagroup1backend.config.ApiResponse<OrderResponse> processPayment(
-            @PathVariable Long orderId
+            @PathVariable Long orderId,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
 
     @Operation(
@@ -142,14 +146,6 @@ public interface OrderControllerDocs {
                                           "totalPrice": 500,
                                           "orderStatus": "PAID",
                                           "orderTime": "2024-12-01T14:30:00"
-                                        },
-                                        {
-                                          "orderId": 12,
-                                          "userId": 1,
-                                          "snackName": "새우깡",
-                                          "totalPrice": 1200,
-                                          "orderStatus": "CANCELED",
-                                          "orderTime": "2024-11-30T10:00:00"
                                         }
                                       ]
                                     }
@@ -157,7 +153,10 @@ public interface OrderControllerDocs {
                     )
             )
     )
-    urecagroup1backend.config.ApiResponse<List<OrderResponse>> getOrderHistory();
+        // [수정됨] User 파라미터 추가 (API 명세서에는 안보이게 hidden=true)
+    urecagroup1backend.config.ApiResponse<List<OrderResponse>> getOrderHistory(
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
+    );
 
     @Operation(
             summary = "결제 취소",
@@ -192,7 +191,9 @@ public interface OrderControllerDocs {
                     )
             )
     )
+        // [수정됨] User 파라미터 추가
     urecagroup1backend.config.ApiResponse<OrderResponse> cancelOrder(
-            @PathVariable Long orderId
+            @PathVariable Long orderId,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
 }

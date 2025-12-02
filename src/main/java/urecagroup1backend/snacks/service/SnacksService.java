@@ -28,7 +28,7 @@ public class SnacksService {
         Snack snack = Snack.builder()
                 .name(request.name())
                 .price(request.price())
-                .status(request.status())
+                .quantity(request.quantity())
                 .build();
 
         Snack savedSnack = snackRepository.save(snack);

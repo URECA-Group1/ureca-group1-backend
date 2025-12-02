@@ -52,9 +52,7 @@ public class SecurityConfig {
                                 "/member/create", "/member/doLogin",
                                 "/member/google/doLogin", "/member/kakao/doLogin", "/oauth2/**",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                                "api/snacks", "api/snacks/list","api/orders/{snackId}",
-                                "api/orders/{orderId}/payment", "api/orders/{orderId}/cancel",
-                                "api/orders/list")
+                                "api/snacks", "api/snacks/list")
                         .permitAll().anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter : 이 클래스에서 폼 로그인 인증을 처리
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)

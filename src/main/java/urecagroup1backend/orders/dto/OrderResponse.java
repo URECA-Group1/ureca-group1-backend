@@ -28,7 +28,7 @@ public record OrderResponse(
     public static OrderResponse from(Order order) {
         return new OrderResponse(
                 order.getId(),
-                null, // User
+                order.getMember().getId(),
                 order.getSnack().getName(),
                 order.getSnack().getPrice(),
                 order.getStatus().name(),

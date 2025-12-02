@@ -3,6 +3,8 @@ package urecagroup1backend.orders.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import urecagroup1backend.member.domain.Member;
+import urecagroup1backend.member.repository.MemberRepository;
 import urecagroup1backend.orders.Reposiotry.Order;
 import urecagroup1backend.orders.Reposiotry.OrderRespository;
 import urecagroup1backend.orders.dto.OrderResponse;
@@ -24,11 +26,13 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final SnackRepository snackRepository;
     private final OrderRespository orderRepository;
-//    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public OrderResponse enterOrder(Long snackId) {
+    public OrderResponse enterOrder(Long snackId, Long userId) {
         int result = snackRepository.purchaseSnack(snackId);
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         if (result == 0) {
             throw new IllegalStateException("재고가 소진되었습니다.");
@@ -40,53 +44,64 @@ public class OrderService {
         //주문 생성
         Order order = Order.builder()
                 .snack(snack)
-                .status(Order.OrderStatus.PENDING)
-                // .user(user)
+                .member(member)
+                .status(Order.OrderStatus.SUCCESS)
                 .build();
 
         Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
     }
+
     //주문 상태 변경 (PENDING -> PAID)
     @Transactional
-    public OrderResponse Payment(Long orderId) {
+    public OrderResponse Payment(Long orderId, Long userId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
 
+        // 본인 주문이 맞는지 확인
+        if (!order.getMember().getId().equals(userId)) {
+            throw new IllegalStateException("본인의 주문만 결제할 수 있습니다.");
+        }
+
         // 유효성 검사: 대기 상태가 아니면 결제 불가
-        if (order.getStatus() != Order.OrderStatus.PENDING) {
+        if (order.getStatus() != Order.OrderStatus.SUCCESS) {
             throw new IllegalStateException("결제할 수 없는 상태의 주문입니다.");
         }
 
-        // 상태 변경 (Dirty Checking)
+        // 상태 변경
         order.updateStatus(Order.OrderStatus.PAID);
 
         return OrderResponse.from(order);
     }
     //주문 내역 조회
     @Transactional
-    public List<OrderResponse> getOrderHistory() {
-        return orderRepository.findAll().stream()
+    public List<OrderResponse> getOrderHistory(Long userId) {
+        return orderRepository.findAllByMemberId(userId).stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
     //결제 취소
     @Transactional
-    public OrderResponse cancelOrder(Long orderId) {
+    public OrderResponse cancelOrder(Long orderId, Long userId){
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+
+        // 본인 주문이 맞는지 확인
+        if (!order.getMember().getId().equals(userId)) {
+            throw new IllegalStateException("본인의 주문만 취소할 수 있습니다.");
+        }
 
         // 이미 취소된 주문인지 확인
         if (order.getStatus() == Order.OrderStatus.CANCELED || order.getStatus() == Order.OrderStatus.FAIL) {
             throw new IllegalStateException("이미 취소된 주문입니다.");
         }
 
-        // 1. 재고 복구 (SnackStatus: 0 -> 1)
+        // 재고 복구
         snackRepository.updateStatus(order.getSnack().getId());
 
-        // 2. 주문 상태 취소로 변경
+        // 주문 상태 취소로 변경
         order.updateStatus(Order.OrderStatus.CANCELED);
 
         return OrderResponse.from(order);
