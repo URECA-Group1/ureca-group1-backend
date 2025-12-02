@@ -24,7 +24,7 @@ public class Snack {
     @Column(name = "price")
     private int price;
 
-    @Column(name = "status")
-    private Integer status;
+    @Column(name = "quantity")
+    private Integer quantity;
 
 }

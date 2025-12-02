@@ -32,19 +32,19 @@ public interface SnackControllerDocs {
                                           "id": 1,
                                           "name": "초코송이",
                                           "price": 500,
-                                          "status": 1
+                                          "quantity": 1
                                         },
                                         {
                                           "id": 2,
                                           "name": "빈츠",
                                           "price": 1000,
-                                          "status": 1
+                                          "quantity": 1
                                         },
                                         {
                                           "id": 3,
                                           "name": "포카칩",
                                           "price": 1500,
-                                          "status": 1
+                                          "quantity": 1
                                         }
                                       ]
                                     }
@@ -68,7 +68,7 @@ public interface SnackControllerDocs {
                                     {
                                       "name": "새우깡",
                                       "price": 1200,
-                                      "status": 1
+                                      "quantity": 1
                                     }
                                     """
                     )
@@ -87,7 +87,7 @@ public interface SnackControllerDocs {
                                         "id": 4,
                                         "name": "새우깡",
                                         "price": 1200,
-                                        "status": 1
+                                        "quantity": 1
                                       }
                                     }
                                     """
