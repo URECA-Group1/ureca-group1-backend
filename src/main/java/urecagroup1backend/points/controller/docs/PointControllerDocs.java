@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import urecagroup1backend.config.ApiResponse;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.points.dto.PointResponse;
 
 @Tag(name = "포인트", description = "포인트 관리 API")
@@ -31,5 +33,5 @@ public interface PointControllerDocs {
                     )
             )
     )
-    ApiResponse<PointResponse> getPoints();
+    ApiResponse<PointResponse> getPoints(@AuthenticationPrincipal CustomUserDetails user);
 }
