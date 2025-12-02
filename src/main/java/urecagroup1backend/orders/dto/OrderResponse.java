@@ -18,11 +18,12 @@ public record OrderResponse(
         @Schema(description = "결제 금액")
         int totalPrice,
 
-        @Schema(description = "주문 상태 (COMPLETED, FAIL)")
+        @Schema(description = "주문 상태")
         String orderStatus,
 
         @Schema(description = "주문 일시")
         LocalDateTime orderTime
+
 ) {
     public static OrderResponse from(Order order) {
         return new OrderResponse(

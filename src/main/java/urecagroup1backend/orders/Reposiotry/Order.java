@@ -21,22 +21,32 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-//    user
+/*
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User user; // Member
+*/
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "snack_id")
     private Snack snack;
 
+    @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "order_time")
     private LocalDateTime createdAt;
 
+    // 비즈니스 로직을 위한 상태 변경 메서드
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
     public enum OrderStatus {
-        PENDING, // 대기중
-        COMPLETED, //  주문 완료
+        PENDING, // 주문완료, 결제 대기중
         FAIL,      // 실패
+        PAID,       // 결제 완료
+        CANCELED   // 사용자 요청에 의한 취소
     }
 }

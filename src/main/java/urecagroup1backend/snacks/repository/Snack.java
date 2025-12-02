@@ -25,6 +25,6 @@ public class Snack {
     private int price;
 
     @Column(name = "status")
-    private boolean status;
+    private Integer status;
 
 }
