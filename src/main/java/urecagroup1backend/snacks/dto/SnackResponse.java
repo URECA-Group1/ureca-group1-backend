@@ -6,14 +6,14 @@ public record SnackResponse(
     Long id,
     String snackName,
     int snackPrice,
-    Boolean snackStatus
+    int snackStatus
 ){
     public static SnackResponse from(Snack snack) {
         return new SnackResponse(
                 snack.getId(),
                 snack.getName(),
                 snack.getPrice(),
-                snack.isStatus()
+                snack.getStatus()
         );
     }
 }

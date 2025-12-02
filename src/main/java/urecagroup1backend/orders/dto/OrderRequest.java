@@ -8,5 +8,6 @@ public record OrderRequest(
 
         @Schema(description = "주문할 간식 ID")
         Long snackId
+
 ) {
 }
