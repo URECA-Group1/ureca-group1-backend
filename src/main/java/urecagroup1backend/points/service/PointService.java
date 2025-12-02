@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.repository.MemberRepository;
 import urecagroup1backend.points.domain.Point;
+import urecagroup1backend.points.dto.PointChargeRequest;
 import urecagroup1backend.points.dto.PointResponse;
 import urecagroup1backend.points.repository.PointRepository;
 
@@ -23,6 +24,7 @@ public class PointService {
     private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
 
+    // 잔여 포인트 조회
     @Transactional
     public PointResponse getPoints(Long userId) {
         // Member 먼저 조회
@@ -39,6 +41,19 @@ public class PointService {
                     return pointRepository.save(newPoint);
                 });
 
+        return new PointResponse(point.getPoint());
+    }
+
+    // 포인트 충전
+    @Transactional
+    public PointResponse chargePoints(Long userId, PointChargeRequest request) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보 없음"));
+
+        Point point = pointRepository.findByMember_Id(userId)
+                .orElseThrow(() -> new IllegalArgumentException("포인트 정보 없음"));
+
+        point.addPoint(request.getAmount());
         return new PointResponse(point.getPoint());
     }
 }
