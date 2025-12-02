@@ -68,7 +68,7 @@ public class SeatController implements SeatControllerDocs {
     }
 
     // 좌석 생성
-    @PostMapping("/api/seats")
+    @PostMapping
     public ApiResponse<SeatResponse> createSeat(@RequestBody SeatCreationRequest request) {
         SeatResponse response = seatService.createSeat(request.toSeatNumber());
         return new ApiResponse<>(HttpStatus.CREATED, "좌석 생성 성공", response);

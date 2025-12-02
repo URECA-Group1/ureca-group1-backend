@@ -123,6 +123,10 @@ public class SeatService {
         SeatReservation seatReservation = seatReservationRepository.findFirstBySeatIdAndIsDeleted(seatId, false)
                 .orElseThrow(() -> new IllegalArgumentException("예약된 좌석을 찾을 수 없습니다."));
 
+        if(!seatReservation.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("자신의 예약만 취소할 수 있습니다.");
+        }
+
         // 현재 예약 내역 삭제
         seatReservation.delete();
 
@@ -208,7 +212,6 @@ public class SeatService {
     }
 
     // 이미 예약 or 입실중인지 확인
-    @Transactional
     private void validateUserNotAlreadyReservedOrUsing(Long userId) {
         boolean hasReservation = seatReservationRepository.existsByUserIdAndIsDeletedFalse(userId);
         if (hasReservation) {
