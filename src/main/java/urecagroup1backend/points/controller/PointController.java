@@ -28,9 +28,9 @@ public class PointController implements PointControllerDocs {
 
     @GetMapping
     @Override
-    public ApiResponse<PointResponse> getPoints(@AuthenticationPrincipal CustomUserDetails user) {
-        Long userId = user.getId();
-        PointResponse response = pointService.getPoints(userId);
+    public ApiResponse<PointResponse> getPoints(
+            @AuthenticationPrincipal CustomUserDetails user) {
+        PointResponse response = pointService.getPoints(user.getId());
         return new ApiResponse<>(HttpStatus.OK, "포인트 조회 성공", response);
     }
 
@@ -40,8 +40,7 @@ public class PointController implements PointControllerDocs {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody @Valid PointChargeRequest request
     ) {
-        Long userId = user.getId();
-        PointResponse response = pointService.chargePoints(userId, request);
+        PointResponse response = pointService.chargePoints(user.getId(), request);
         return new ApiResponse<>(HttpStatus.OK, "포인트 충전 완료", response);
     }
 }
