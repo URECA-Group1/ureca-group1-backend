@@ -14,10 +14,10 @@ import urecagroup1backend.oauth.dto.KakaoProfileDto;
 @Transactional
 public class KakaoService {
 
-    @Value("${oauth.kakao.client-id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
 
-    @Value("${oauth.kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
     public AccessTokenDto getAccessToken(String code) {
