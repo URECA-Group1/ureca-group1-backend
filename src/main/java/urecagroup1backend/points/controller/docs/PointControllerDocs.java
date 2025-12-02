@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import urecagroup1backend.config.ApiResponse;
 import urecagroup1backend.member.domain.CustomUserDetails;
+import urecagroup1backend.points.dto.PointChargeRequest;
 import urecagroup1backend.points.dto.PointResponse;
 
 @Tag(name = "포인트", description = "포인트 관리 API")
@@ -41,4 +42,28 @@ public interface PointControllerDocs {
             )
     )
     ApiResponse<PointResponse> getPoints(@AuthenticationPrincipal CustomUserDetails user);
+
+    @Operation(
+            summary = "포인트 충전",
+            description = "입력한 금액만큼 포인트를 충전합니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "포인트 충전 완료",
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                                   {
+                                     "status": 200,
+                                     "message": "포인트 충전 완료",
+                                     "data": {
+                                       "points": 7000
+                                     }
+                                   }
+                                   """
+                    )
+            )
+    )
+    ApiResponse<PointResponse> chargePoints(@AuthenticationPrincipal CustomUserDetails user,
+                                            PointChargeRequest request);
 }

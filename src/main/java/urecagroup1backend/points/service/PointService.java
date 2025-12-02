@@ -47,6 +47,10 @@ public class PointService {
     // 포인트 충전
     @Transactional
     public PointResponse chargePoints(Long userId, PointChargeRequest request) {
+        if (request.getAmount() <= 0) {
+            throw new IllegalArgumentException("충전 금액은 1 이상이어야 합니다.");
+        }
+
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보 없음"));
 
