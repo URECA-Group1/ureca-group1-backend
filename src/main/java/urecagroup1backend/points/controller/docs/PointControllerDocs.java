@@ -31,5 +31,5 @@ public interface PointControllerDocs {
                     )
             )
     )
-    ApiResponse<PointResponse> getMyPoints();
+    ApiResponse<PointResponse> getPoints();
 }
