@@ -4,7 +4,6 @@ package urecagroup1backend.seat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.seat.domain.SeatStatus;
 import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
@@ -25,7 +24,6 @@ import java.util.Optional;
 public class SeatService {
     private final SeatRepository seatRepository;
     private final SeatReservationRepository seatReservationRepository;
-    private final DistributedLock distributedLock; // 분산 락을 위해 구현된 객체
 
     // 전체 좌석 조회
     @Transactional
@@ -74,16 +72,6 @@ public class SeatService {
         }
 
         return seatReservationResponseList;
-    }
-
-    // 예약 시도 (Redis 분산 Lock 적용)
-    @Transactional
-    public SeatReservationResponse tryReserveSeat(Long seatId, Long userId) {
-        String lockKey = "seat: " + seatId;
-
-        return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
-            return reserveSeat(seatId, userId);
-        });
     }
 
     // 예약
@@ -151,15 +139,6 @@ public class SeatService {
         return SeatReservationResponse.from(seatReservation);
     }
 
-    // 입실 시도 (Redis 분산 Lock 적용)
-    @Transactional
-    public SeatResponse tryEnterSeat(Long seatId, Long userId) {
-        String lockKey = "seat: " + seatId;
-
-        return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
-            return enterSeat(seatId, userId);
-        });
-    }
 
     // 입실
     @Transactional
