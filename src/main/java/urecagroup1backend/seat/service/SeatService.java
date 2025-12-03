@@ -79,7 +79,7 @@ public class SeatService {
     // 예약 시도 (Redis 분산 Lock 적용)
     @Transactional
     public SeatReservationResponse tryReserveSeat(Long seatId, Long userId) {
-        String lockKey = "seat-reservation: " + seatId;
+        String lockKey = "seat: " + seatId;
 
         return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
             return reserveSeat(seatId, userId);
@@ -154,7 +154,7 @@ public class SeatService {
     // 입실 시도 (Redis 분산 Lock 적용)
     @Transactional
     public SeatResponse tryEnterSeat(Long seatId, Long userId) {
-        String lockKey = "seat-enter: " + seatId;
+        String lockKey = "seat: " + seatId;
 
         return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
             return enterSeat(seatId, userId);
