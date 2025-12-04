@@ -1,4 +1,4 @@
-package urecagroup1backend.snacks.api.docs;
+package urecagroup1backend.snacks.controller.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

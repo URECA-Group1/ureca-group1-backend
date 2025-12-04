@@ -1,9 +1,9 @@
 package urecagroup1backend.snacks.dto;
 
-import urecagroup1backend.snacks.repository.Snack;
+import urecagroup1backend.snacks.domain.Snack;
 
 public record SnackResponse(
-    Long id,
+    Long snackId,
     String snackName,
     int snackPrice,
     int snackQuantity

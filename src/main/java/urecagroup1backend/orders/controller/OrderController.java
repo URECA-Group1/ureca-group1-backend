@@ -7,9 +7,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
 import urecagroup1backend.member.domain.CustomUserDetails;
+import urecagroup1backend.orders.Repository.OrderRepository;
 import urecagroup1backend.orders.controller.docs.OrderControllerDocs;
 import urecagroup1backend.orders.dto.OrderResponse;
+import urecagroup1backend.orders.service.OrderProducer;
 import urecagroup1backend.orders.service.OrderService;
+import urecagroup1backend.snacks.repository.SnackRepository;
 
 import java.util.List;
 
@@ -27,19 +30,18 @@ import java.util.List;
 public class OrderController implements OrderControllerDocs {
 
     private final OrderService orderService;
+    private final OrderProducer orderProducer;
+    private final OrderRepository orderRepository;
+    private final SnackRepository snackRepository;
 
-    // [주문 진입 단계]
+    // [주문 진입 단계] - Kafka 적용
     @Override
     @PostMapping("/{snackId}")
-    public ApiResponse<OrderResponse> enterOrder(@PathVariable Long snackId,
+    public ApiResponse<String> enterOrder(@PathVariable Long snackId,
                                                  @AuthenticationPrincipal CustomUserDetails user) {
-        // 유저 정보 유효성 검사 (방어 코드)
-        if (user == null || user.getId() == null) {
-            log.error("인증 실패: user 객체 또는 ID가 null입니다. user={}", user);
-            throw new IllegalArgumentException("로그인 정보가 유효하지 않습니다. 토큰을 확인해주세요.");
-        }
-        OrderResponse response = orderService.enterOrder(snackId, user.getId());
-        return new ApiResponse<>(HttpStatus.CREATED, "구매 진입 성공", response);
+        // 1. Kafka로 메시지 전송 (비동기)
+        orderProducer.sendOrderRequest(snackId, user.getId());
+        return new ApiResponse<>(HttpStatus.OK, "주문 요청이 접수되었습니다.", "SUCCESS");
     }
 
     // [결제 단계] - 주문 상태를 결제 완료(PAID)로 변경
@@ -47,7 +49,7 @@ public class OrderController implements OrderControllerDocs {
     @PostMapping("/{orderId}/payment")
     public ApiResponse<OrderResponse> processPayment(@PathVariable Long orderId,
                                                      @AuthenticationPrincipal CustomUserDetails user) {
-        OrderResponse response = orderService.Payment(orderId, user.getId());
+        OrderResponse response = orderService.payment(orderId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "결제 성공", response);
     }
 
@@ -62,7 +64,6 @@ public class OrderController implements OrderControllerDocs {
 
     // [결제 취소] - 주문 상태를 취소(CANCELED)로 변경
     @Override
-    @PostMapping("/{orderId}/cancel")
     public ApiResponse<OrderResponse> cancelOrder(@PathVariable Long orderId,
                                                   @AuthenticationPrincipal CustomUserDetails user) {
         OrderResponse response = orderService.cancelOrder(orderId, user.getId());

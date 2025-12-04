@@ -3,7 +3,7 @@ package urecagroup1backend.snacks.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
-import urecagroup1backend.snacks.api.docs.SnackControllerDocs;
+import urecagroup1backend.snacks.controller.docs.SnackControllerDocs;
 import urecagroup1backend.snacks.dto.SnackRequest;
 import urecagroup1backend.snacks.dto.SnackResponse;
 import urecagroup1backend.snacks.service.SnacksService;
