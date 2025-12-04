@@ -1,10 +1,10 @@
-package urecagroup1backend.orders.Reposiotry;
+package urecagroup1backend.orders.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import urecagroup1backend.member.domain.Member;
-import urecagroup1backend.snacks.repository.Snack;
+import urecagroup1backend.snacks.domain.Snack;
 
 import java.time.LocalDateTime;
 
@@ -38,10 +38,10 @@ public class Order {
     @Column(name = "order_time")
     private LocalDateTime createdAt;
 
-    // 비즈니스 로직을 위한 상태 변경 메서드
     public void updateStatus(OrderStatus status) {
         this.status = status;
     }
+
     public enum OrderStatus {
         SUCCESS, // 주문성공, 결제 전
         FAIL,      // 실패

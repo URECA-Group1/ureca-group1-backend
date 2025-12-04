@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.snacks.dto.SnackRequest;
 import urecagroup1backend.snacks.dto.SnackResponse;
-import urecagroup1backend.snacks.repository.Snack;
+import urecagroup1backend.snacks.domain.Snack;
 import urecagroup1backend.snacks.repository.SnackRepository;
 
 import java.util.List;

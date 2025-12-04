@@ -1,4 +1,4 @@
-package urecagroup1backend.snacks.repository;
+package urecagroup1backend.snacks.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

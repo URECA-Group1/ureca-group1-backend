@@ -1,7 +1,7 @@
 package urecagroup1backend.orders.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import urecagroup1backend.orders.Reposiotry.Order;
+import urecagroup1backend.orders.domain.Order;
 
 import java.time.LocalDateTime;
 

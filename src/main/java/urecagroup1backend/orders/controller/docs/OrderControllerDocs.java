@@ -17,8 +17,10 @@ import java.util.List;
 public interface OrderControllerDocs {
 
     @Operation(
-            summary = "간식 주문(구매) 진입",
-            description = "특정 간식(snackId)을 선택하여 가주문을 생성합니다(상태: PENDING). 재고가 없거나 유효하지 않은 간식은 주문할 수 없습니다."
+            summary = "간식 주문 요청 (Kafka 비동기 접수)",
+            description = "사용자의 주문 요청을 받아 대기열(Kafka)에 등록합니다. \n\n" +
+                    "**주의:** 요청 즉시 주문이 생성되는 것이 아니며, '접수' 상태만 반환됩니다. \n" +
+                    "실제 성공 여부는 잠시 후 **[결제 내역 조회]** API를 통해 확인해야 합니다."
     )
     @Parameter(
             name = "snackId",
@@ -27,23 +29,16 @@ public interface OrderControllerDocs {
             required = true
     )
     @ApiResponse(
-            responseCode = "201",
-            description = "주문 진입(가주문 생성) 성공",
+            responseCode = "200",
+            description = "주문 요청 접수 성공 (처리 중)",
             content = @Content(
                     mediaType = "application/json",
                     examples = @ExampleObject(
                             value = """
                                     {
-                                      "status": 201,
-                                      "message": "구매 진입 성공",
-                                      "data": {
-                                        "orderId": 15,
-                                        "userId": 1,
-                                        "snackName": "몽쉘 카카오",
-                                        "totalPrice": 500,
-                                        "orderStatus": "PENDING",
-                                        "orderTime": "2024-12-01T14:30:00"
-                                      }
+                                      "status": 200,
+                                      "message": "주문 요청이 정상적으로 접수되었습니다.",
+                                      "data": "SUCCESS"
                                     }
                                     """
                     )
@@ -51,28 +46,29 @@ public interface OrderControllerDocs {
     )
     @ApiResponse(
             responseCode = "400",
-            description = "주문 실패 (재고 없음 또는 잘못된 요청)",
+            description = "잘못된 요청 (로그인 정보 없음 등)",
             content = @Content(
                     examples = @ExampleObject(
                             value = """
                                     {
                                       "status": 400,
-                                      "message": "구매 불가능한 간식입니다.",
+                                      "message": "로그인 정보가 유효하지 않습니다.",
                                       "data": null
                                     }
                                     """
                     )
             )
     )
-        // [수정됨] User 파라미터 추가 + Swagger에서 숨김 처리
-    urecagroup1backend.config.ApiResponse<OrderResponse> enterOrder(
+
+    urecagroup1backend.config.ApiResponse<String> enterOrder(
             @PathVariable Long snackId,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
 
+
     @Operation(
             summary = "결제 승인(최종 확정)",
-            description = "생성된 주문(orderId)에 대해 최종 결제를 수행합니다. 주문 상태가 PENDING에서 PAID로 변경됩니다."
+            description = "생성된 주문(orderId)에 대해 최종 결제를 수행합니다. 주문 상태가 SUCCESS에서 PAID로 변경됩니다."
     )
     @Parameter(
             name = "orderId",
@@ -118,7 +114,6 @@ public interface OrderControllerDocs {
                     )
             )
     )
-        // [수정됨] User 파라미터 추가
     urecagroup1backend.config.ApiResponse<OrderResponse> processPayment(
             @PathVariable Long orderId,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
@@ -144,7 +139,7 @@ public interface OrderControllerDocs {
                                           "userId": 1,
                                           "snackName": "몽쉘 카카오",
                                           "totalPrice": 500,
-                                          "orderStatus": "PAID",
+                                          "orderStatus": "SUCCESS",
                                           "orderTime": "2024-12-01T14:30:00"
                                         }
                                       ]
@@ -153,14 +148,13 @@ public interface OrderControllerDocs {
                     )
             )
     )
-        // [수정됨] User 파라미터 추가 (API 명세서에는 안보이게 hidden=true)
     urecagroup1backend.config.ApiResponse<List<OrderResponse>> getOrderHistory(
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
 
     @Operation(
             summary = "결제 취소",
-            description = "특정 주문(orderId)을 취소 처리합니다. 주문 상태가 CANCELED(또는 FAIL)로 변경됩니다."
+            description = "특정 주문(orderId)을 취소 처리합니다. 주문 상태가 CANCELED로 변경됩니다."
     )
     @Parameter(
             name = "orderId",
@@ -191,7 +185,6 @@ public interface OrderControllerDocs {
                     )
             )
     )
-        // [수정됨] User 파라미터 추가
     urecagroup1backend.config.ApiResponse<OrderResponse> cancelOrder(
             @PathVariable Long orderId,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
