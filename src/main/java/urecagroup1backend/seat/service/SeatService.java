@@ -139,6 +139,7 @@ public class SeatService {
         return SeatReservationResponse.from(seatReservation);
     }
 
+
     // 입실
     @Transactional
     public SeatResponse enterSeat(Long seatId, Long userId) {
