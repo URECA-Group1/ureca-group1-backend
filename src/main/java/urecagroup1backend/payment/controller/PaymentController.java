@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import urecagroup1backend.config.ApiResponse;
@@ -27,7 +28,7 @@ public class PaymentController implements PaymentControllerDocs {
     private final PaymentService paymentService;
 
     @PostMapping
-    public ApiResponse<Void> confirm(PaymentConfirmRequest request,
+    public ApiResponse<Void> confirm(@RequestBody PaymentConfirmRequest request,
                                      @AuthenticationPrincipal CustomUserDetails user) {
 
         paymentService.confirmPayment(request, user.getId());
