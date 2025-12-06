@@ -12,8 +12,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import urecagroup1backend.config.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.payment.dto.PaymentConfirmRequest;
 
 @Tag(name = "토스 결제", description = "토스 결제 승인 API")
@@ -45,7 +47,8 @@ public interface PaymentControllerDocs {
                     content = @Content(
                             schema = @Schema(implementation = PaymentConfirmRequest.class),
                             examples = @ExampleObject(
-                                    name = "결제 승인 요청 예시",
+                                    summary = "결제 승인 요청 예시",
+                                    name = "토스 결제 승인 API 호출 시 필요한 요청 바디 예시",
                                     value = """
                                             {
                                               "paymentKey": "pay_abc123",
@@ -56,6 +59,7 @@ public interface PaymentControllerDocs {
                             )
                     )
             )
-            final PaymentConfirmRequest request
+            final PaymentConfirmRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
     );
 }
