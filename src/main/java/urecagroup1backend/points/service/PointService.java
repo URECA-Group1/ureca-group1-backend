@@ -1,9 +1,9 @@
 /*
-@file FileName.java
-@author 홍길동
+@file PointService.java
+@author 허영현
 @version 1.0
-@since 2025-01-01
-@description 이 파일은 ~ 기능을 수행하는 클래스입니다.
+@since 2025-12-02
+@description 유저의 포인트 관리(잔여 포인트 조회, 포인트 사용 내역 조회) 비즈니스 로직을 수행하는 서비스 파일입니다.
 */
 package urecagroup1backend.points.service;
 

@@ -1,9 +1,9 @@
 /*
-@file FileName.java
-@author 홍길동
+@file PointControllerDocs.java
+@author 허영현
 @version 1.0
-@since 2025-01-01
-@description 이 파일은 ~ 기능을 수행하는 클래스입니다.
+@since 2025-12-02
+@description PointController의 Swagger API 문서입니다.
 */
 package urecagroup1backend.points.controller.docs;
 

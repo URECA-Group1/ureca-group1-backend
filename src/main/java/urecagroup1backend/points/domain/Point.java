@@ -1,9 +1,9 @@
 /*
-@file FileName.java
-@author 홍길동
+@file Point.java
+@author 허영현
 @version 1.0
-@since 2025-01-01
-@description 이 파일은 ~ 기능을 수행하는 클래스입니다.
+@since 2025-12-02
+@description 유저의 포인트를 관리하는 도메인 입니다.
 */
 package urecagroup1backend.points.domain;
 
