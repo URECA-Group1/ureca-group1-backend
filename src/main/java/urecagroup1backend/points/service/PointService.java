@@ -1,9 +1,9 @@
 /*
-@file FileName.java
-@author 홍길동
+@file PointService.java
+@author 허영현
 @version 1.0
-@since 2025-01-01
-@description 이 파일은 ~ 기능을 수행하는 클래스입니다.
+@since 2025-12-02
+@description 유저의 포인트 관리(잔여 포인트 조회, 포인트 사용 내역 조회) 비즈니스 로직을 수행하는 서비스 파일입니다.
 */
 package urecagroup1backend.points.service;
 
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.repository.MemberRepository;
 import urecagroup1backend.points.domain.Point;
-import urecagroup1backend.points.dto.PointChargeRequest;
 import urecagroup1backend.points.dto.PointResponse;
 import urecagroup1backend.points.repository.PointRepository;
 
@@ -41,23 +40,6 @@ public class PointService {
                     return pointRepository.save(newPoint);
                 });
 
-        return new PointResponse(point.getPoint());
-    }
-
-    // 포인트 충전
-    @Transactional
-    public PointResponse chargePoints(Long userId, PointChargeRequest request) {
-        if (request.getAmount() <= 0) {
-            throw new IllegalArgumentException("충전 금액은 1 이상이어야 합니다.");
-        }
-
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보 없음"));
-
-        Point point = pointRepository.findByMember_Id(userId)
-                .orElseThrow(() -> new IllegalArgumentException("포인트 정보 없음"));
-
-        point.addPoint(request.getAmount());
         return new PointResponse(point.getPoint());
     }
 }
