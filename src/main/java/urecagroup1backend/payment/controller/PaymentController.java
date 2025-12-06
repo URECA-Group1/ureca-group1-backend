@@ -5,7 +5,6 @@
 @since 2025-12-07
 @description 토스 결제 승인을 요청하는 컨트롤러 입니다.
 */
-
 package urecagroup1backend.payment.controller;
 
 import lombok.RequiredArgsConstructor;
