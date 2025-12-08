@@ -37,7 +37,7 @@ public class OrderController implements OrderControllerDocs {
     // [주문 진입 단계] - Kafka 적용
     @Override
     @PostMapping("/{snackId}")
-    public ApiResponse<String> enterOrder(@PathVariable Long snackId,
+    public ApiResponse<String> enterOrder(@PathVariable("snackId") Long snackId,
                                                  @AuthenticationPrincipal CustomUserDetails user) {
         // 1. Kafka로 메시지 전송 (비동기)
         orderProducer.sendOrderRequest(snackId, user.getId());
@@ -47,7 +47,7 @@ public class OrderController implements OrderControllerDocs {
     // [결제 단계] - 주문 상태를 결제 완료(PAID)로 변경
     @Override
     @PostMapping("/{orderId}/payment")
-    public ApiResponse<OrderResponse> processPayment(@PathVariable Long orderId,
+    public ApiResponse<OrderResponse> processPayment(@PathVariable("orderId") Long orderId,
                                                      @AuthenticationPrincipal CustomUserDetails user) {
         OrderResponse response = orderService.payment(orderId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "결제 성공", response);

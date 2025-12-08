@@ -9,6 +9,8 @@ import urecagroup1backend.member.repository.MemberRepository;
 import urecagroup1backend.orders.domain.Order;
 import urecagroup1backend.orders.Repository.OrderRepository;
 import urecagroup1backend.orders.dto.OrderResponse;
+import urecagroup1backend.points.domain.Point;
+import urecagroup1backend.points.repository.PointRepository;
 import urecagroup1backend.snacks.domain.Snack;
 import urecagroup1backend.snacks.repository.SnackRepository;
 
@@ -29,6 +31,7 @@ public class OrderService {
     private final SnackRepository snackRepository;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final PointRepository pointRepository;
 
     @Transactional
     public void processOrder(Long snackId, Long userId) {
@@ -79,9 +82,21 @@ public class OrderService {
         // 상태 변경
         order.updateStatus(Order.OrderStatus.PAID);
 
+        /// 포인트 차감
+        // 1) 간식 가격 가져오기
+        Long snackPrice = (long) order.getSnack().getPrice();
+
+        // 2) 유저 포인트 조회
+        Point point = pointRepository.findByMember_Id(userId)
+                .orElseThrow(() -> new IllegalArgumentException("포인트 정보 없음"));
+
+        // 3) 포인트 차감
+        point.usePoint(snackPrice);
+
         return OrderResponse.from(order);
 
     }
+
     //주문 내역 조회
     @Transactional
     public List<OrderResponse> getOrderHistory(Long userId) {
