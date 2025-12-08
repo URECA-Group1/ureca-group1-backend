@@ -189,4 +189,37 @@ public interface OrderControllerDocs {
             @PathVariable Long orderId,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
     );
+
+    @Operation(
+            summary = "결제 완료(PAID) 내역 조회",
+            description = "사용자가 결제까지 완료한 주문만 필터링하여 조회합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "PAID 내역 조회 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                            value = """
+                                {
+                                  "status": 200,
+                                  "message": "결제 완료 내역 조회 성공",
+                                  "data": [
+                                    {
+                                      "orderId": 1,
+                                      "userId": 1,
+                                      "snackName": "허니버터칩",
+                                      "totalPrice": 1500,
+                                      "orderStatus": "PAID",
+                                      "orderTime": "2024-12-01T14:20:00"
+                                    }
+                                  ]
+                                }
+                                """
+                    )
+            )
+    )
+    urecagroup1backend.config.ApiResponse<List<OrderResponse>> getPaidOrders(
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails user
+    );
 }
