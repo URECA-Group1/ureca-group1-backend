@@ -136,4 +136,13 @@ public class OrderService {
 
         return OrderResponse.from(order);
     }
+
+    // PAID 주문만 조회
+    @Transactional
+    public List<OrderResponse> getPaidOrders(Long userId) {
+        return orderRepository.findAllByMemberIdAndStatus(userId, Order.OrderStatus.PAID)
+                .stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+    }
 }
