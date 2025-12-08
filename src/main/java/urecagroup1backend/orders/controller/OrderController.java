@@ -69,4 +69,13 @@ public class OrderController implements OrderControllerDocs {
         OrderResponse response = orderService.cancelOrder(orderId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "결제 취소 성공", response);
     }
+
+    // [결제 완료 내역 조회] - PAID 상태만 조회
+    @GetMapping("/paid")
+    public ApiResponse<List<OrderResponse>> getPaidOrders(
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        List<OrderResponse> responseList = orderService.getPaidOrders(user.getId());
+        return new ApiResponse<>(HttpStatus.OK, "결제 완료 내역 조회 성공", responseList);
+    }
 }
