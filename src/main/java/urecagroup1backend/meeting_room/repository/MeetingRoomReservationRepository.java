@@ -17,4 +17,10 @@ public interface MeetingRoomReservationRepository extends JpaRepository<MeetingR
     Optional<MeetingRoomReservation> findActiveOrPendingReservationByMeetingRoomId(@Param("meetingRoomId") Long meetingRoomId);
 
     List<MeetingRoomReservation> findByMeetingRoomIdAndStatus(Long meetingRoomId, MeetingRoomReservation.ReservationStatus status);
+
+    @Query("SELECT r FROM MeetingRoomReservation r " +
+            "WHERE r.member.id = :memberId " +
+            "AND r.status IN ('PENDING', 'ACTIVE') " +
+            "ORDER BY r.id DESC")
+    List<MeetingRoomReservation> findActiveReservationsByMemberId(@Param("memberId") Long memberId);
 }

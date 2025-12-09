@@ -53,4 +53,22 @@ public class MeetingRoomController implements MeetingRoomControllerDocs {
         MeetingRoomResponse response = meetingRoomService.createMeetingRoom();
         return new ApiResponse<>(HttpStatus.CREATED, "회의실 생성 성공", response);
     }
+
+    @Override
+    @GetMapping("/reservations")
+    public ApiResponse<List<ReservationResponse>> getUserReservations(Principal principal) {
+        String email = principal.getName();
+        List<ReservationResponse> reservations = meetingRoomService.getUserReservations(email);
+        return new ApiResponse<>(HttpStatus.OK, "예약 목록 조회 성공", reservations);
+    }
+
+    @Override
+    @DeleteMapping("/reservations/{reservationId}")
+    public ApiResponse<Void> cancelReservation(
+            @PathVariable Long reservationId,
+            Principal principal) {
+        String email = principal.getName();
+        meetingRoomService.cancelReservation(reservationId, email);
+        return new ApiResponse<>(HttpStatus.OK, "예약 취소 성공", null);
+    }
 }
