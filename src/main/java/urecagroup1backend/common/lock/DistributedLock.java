@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @file DistributedLock
+ * @author 최인호
+ * @description 분산락 컴포넌트 파일 설정
+ */
+
 @Slf4j
 @Component
 @RequiredArgsConstructor

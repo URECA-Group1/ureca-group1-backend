@@ -8,6 +8,13 @@ import urecagroup1backend.member.domain.Member;
 
 import java.time.LocalDateTime;
 
+
+/**
+ * @file MeetingRoomReservation
+ * @author 최인호
+ * @description 미팅룸 예약 테이블
+ */
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

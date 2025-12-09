@@ -15,6 +15,12 @@ import urecagroup1backend.meeting_room.dto.ReservationResponse;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * @file MeetingRoomControllerDocs
+ * @author 최인호
+ * @description 미팅룸 스웨거용 docs 파일
+ */
+
 @Tag(name = "회의실", description = "회의실 예약 관리 API")
 public interface MeetingRoomControllerDocs {
 

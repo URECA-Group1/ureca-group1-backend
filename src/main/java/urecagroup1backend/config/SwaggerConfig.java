@@ -14,6 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+/**
+ * @file SwaggerConfig
+ * @author 최인호
+ * @description 스웨거 설정 파일
+ */
+
 @Configuration
 public class SwaggerConfig {
 

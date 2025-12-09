@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @file RedissonConfig
+ * @author 최인호
+ * @description 레디스 설정 파일
+ */
+
 @Configuration
 public class RedissonConfig {
 

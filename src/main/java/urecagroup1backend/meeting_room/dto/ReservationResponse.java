@@ -2,6 +2,12 @@ package urecagroup1backend.meeting_room.dto;
 
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 
+/**
+ * @file ReservationResponse
+ * @author 최인호
+ * @description 예약 응답 DTO
+ */
+
 public record ReservationResponse(
         Long id,
         Long meetingRoomId,

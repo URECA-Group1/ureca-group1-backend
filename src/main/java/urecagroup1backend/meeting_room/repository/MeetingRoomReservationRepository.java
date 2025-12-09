@@ -9,6 +9,12 @@ import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @file MeetingRoomReservationRepository
+ * @author 최인호
+ * @description 미팅룸 예약 레포지토리
+ */
+
 @Repository
 public interface MeetingRoomReservationRepository extends JpaRepository<MeetingRoomReservation, Long> {
 

@@ -12,6 +12,12 @@ import urecagroup1backend.meeting_room.dto.ReservationRequest;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
 import urecagroup1backend.meeting_room.service.MeetingRoomService;
 
+/**
+ * @file MeetingRoomController
+ * @author 최인호
+ * @description 미팅룸 컨트롤러
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/meeting-rooms")

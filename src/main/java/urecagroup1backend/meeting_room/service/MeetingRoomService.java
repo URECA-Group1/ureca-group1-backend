@@ -19,6 +19,12 @@ import urecagroup1backend.member.repository.MemberRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @file MeetingRoomService
+ * @author 최인호
+ * @description 미팅룸 서비스
+ */
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
