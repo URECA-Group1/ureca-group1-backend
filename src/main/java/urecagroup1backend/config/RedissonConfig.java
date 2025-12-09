@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @file RedissonConfig
  * @author 최인호
- * @description 레디스 설정 파일
+ * @description 레디스 분산락 설정 파일
  */
 
 @Configuration
