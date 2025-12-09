@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
@@ -55,12 +56,14 @@ class MeetingRoomCachePureJavaTest {
                 MeetingRoomRepository meetingRoomRepository,
                 MeetingRoomReservationRepository reservationRepository,
                 MemberRepository memberRepository,
-                DistributedLock distributedLock) {
+                DistributedLock distributedLock,
+                RedisTemplate<String, Object> redisTemplate) { // redisTemplate 주입
             return new MeetingRoomService(
                     meetingRoomRepository,
                     reservationRepository,
                     memberRepository,
-                    distributedLock
+                    distributedLock,
+                    redisTemplate // 생성자에 전달
             );
         }
 
@@ -91,6 +94,11 @@ class MeetingRoomCachePureJavaTest {
                         return null;
                     });
             return lock;
+        }
+
+        @Bean
+        public RedisTemplate<String, Object> redisTemplate() {
+            return mock(RedisTemplate.class); // RedisTemplate Mock Bean 추가
         }
     }
 
