@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
@@ -46,12 +47,15 @@ class MeetingRoomConcurrencyTest {
     private RedissonClient redissonClient;
     @Mock
     private RLock rLock;
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
     void setUp() {
         // 의존성 수동 주입
         distributedLock = new DistributedLock(redissonClient);
-        meetingRoomService = new MeetingRoomService(meetingRoomRepository, reservationRepository, memberRepository, distributedLock);
+        meetingRoomService = new MeetingRoomService(meetingRoomRepository, reservationRepository, memberRepository,
+                distributedLock, redisTemplate);
     }
 
     @Test
@@ -70,7 +74,7 @@ class MeetingRoomConcurrencyTest {
 
         Member testMember = Member.builder().email(userEmail).build();
         MeetingRoom testMeetingRoom = MeetingRoom.builder().id(meetingRoomId).available(true).build();
-        
+
         // NPE 수정을 위해 status 추가
         MeetingRoomReservation testReservation = MeetingRoomReservation.builder()
                 .id(1L)
@@ -90,7 +94,8 @@ class MeetingRoomConcurrencyTest {
 
         when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(testMeetingRoom));
         when(memberRepository.findByEmail(userEmail)).thenReturn(Optional.of(testMember));
-        when(reservationRepository.findActiveOrPendingReservationByMeetingRoomId(meetingRoomId)).thenReturn(Optional.empty());
+        when(reservationRepository.findActiveOrPendingReservationByMeetingRoomId(meetingRoomId)).thenReturn(
+                Optional.empty());
         when(reservationRepository.save(any(MeetingRoomReservation.class))).thenReturn(testReservation);
 
         // when

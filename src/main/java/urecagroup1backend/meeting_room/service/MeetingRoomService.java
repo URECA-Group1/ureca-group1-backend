@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
+import urecagroup1backend.meeting_room.dto.MeetingRoomStatusUpdate;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
 import urecagroup1backend.meeting_room.repository.MeetingRoomRepository;
 import urecagroup1backend.meeting_room.repository.MeetingRoomReservationRepository;
@@ -34,6 +36,10 @@ public class MeetingRoomService {
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final DistributedLock distributedLock;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public static final String MEETING_ROOM_STATUS_TOPIC = "meeting-room-status";
+
 
     // Look-aside: 캐시 확인 → 없으면 DB 조회 후 캐싱
     @Cacheable(value = "availableRooms", key = "'all'")
@@ -83,6 +89,11 @@ public class MeetingRoomService {
                 .build();
 
         MeetingRoomReservation saved = reservationRepository.save(reservation);
+
+        // Redis Pub/Sub: 회의실 상태 변경 메시지 발행
+        redisTemplate.convertAndSend(MEETING_ROOM_STATUS_TOPIC, new MeetingRoomStatusUpdate(meetingRoomId, false));
+
+
         return ReservationResponse.from(saved);
     }
 
@@ -146,5 +157,8 @@ public class MeetingRoomService {
         }
 
         reservation.cancel();
+
+        // Redis Pub/Sub: 회의실 상태 변경 메시지 발행
+        redisTemplate.convertAndSend(MEETING_ROOM_STATUS_TOPIC, new MeetingRoomStatusUpdate(reservation.getMeetingRoom().getId(), true));
     }
 }
