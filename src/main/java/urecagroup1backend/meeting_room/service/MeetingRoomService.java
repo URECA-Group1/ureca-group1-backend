@@ -1,6 +1,9 @@
 package urecagroup1backend.meeting_room.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.common.lock.DistributedLock;
@@ -26,6 +29,8 @@ public class MeetingRoomService {
     private final MemberRepository memberRepository;
     private final DistributedLock distributedLock;
 
+    // Look-aside: 캐시 확인 → 없으면 DB 조회 후 캐싱
+    @Cacheable(value = "availableRooms", key = "'all'")
     public List<MeetingRoomResponse> getAvailableRooms() {
         return meetingRoomRepository.findByAvailable(true)
                 .stream()
@@ -37,6 +42,10 @@ public class MeetingRoomService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "availableRooms", key = "'all'"),
+        @CacheEvict(value = "userReservations", key = "#email")
+    })
     public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
         String lockKey = "meeting-room:reservation:" + meetingRoomId;
 
@@ -97,6 +106,8 @@ public class MeetingRoomService {
         return MeetingRoomResponse.from(saved);
     }
 
+    // 사용자별로 다른 데이터 → 키에 #email 사용
+    @Cacheable(value = "userReservations", key = "#email")
     public List<ReservationResponse> getUserReservations(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
@@ -107,7 +118,12 @@ public class MeetingRoomService {
                 .collect(Collectors.toList());
     }
 
+    // Evict는 쓰기 전략 설정해 놓은 것. 캐싱 값에 영향이 가는 로직이므로 사용.
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "availableRooms", key = "'all'"),
+        @CacheEvict(value = "userReservations", key = "#email")
+    })
     public void cancelReservation(Long reservationId, String email) {
         MeetingRoomReservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
