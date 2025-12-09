@@ -144,4 +144,64 @@ public interface MeetingRoomControllerDocs {
             )
     )
     urecagroup1backend.config.ApiResponse<MeetingRoomResponse> createMeetingRoom();
+
+    @Operation(
+            summary = "사용자 예약 목록 조회",
+            description = "로그인한 사용자의 회의실 예약 목록을 조회합니다. PENDING 또는 ACTIVE 상태의 예약만 반환됩니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "예약 목록 조회 성공",
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                                    {
+                                      "status": 200,
+                                      "message": "예약 목록 조회 성공",
+                                      "data": [
+                                        {
+                                          "id": 1,
+                                          "meetingRoomId": 1,
+                                          "phoneNumber": "010-1234-5678",
+                                          "status": "ACTIVE"
+                                        },
+                                        {
+                                          "id": 2,
+                                          "meetingRoomId": 2,
+                                          "phoneNumber": null,
+                                          "status": "PENDING"
+                                        }
+                                      ]
+                                    }
+                                    """
+                    )
+            )
+    )
+    urecagroup1backend.config.ApiResponse<List<ReservationResponse>> getUserReservations(
+            @Parameter(hidden = true) Principal principal
+    );
+
+    @Operation(
+            summary = "예약 취소",
+            description = "예약 ID로 예약을 취소합니다. 본인의 예약만 취소할 수 있으며, 이미 취소된 예약은 취소할 수 없습니다. 취소 후 해당 회의실은 예약 가능 상태로 변경됩니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "예약 취소 성공",
+            content = @Content(
+                    examples = @ExampleObject(
+                            value = """
+                                    {
+                                      "status": 200,
+                                      "message": "예약 취소 성공",
+                                      "data": null
+                                    }
+                                    """
+                    )
+            )
+    )
+    urecagroup1backend.config.ApiResponse<Void> cancelReservation(
+            @PathVariable Long reservationId,
+            @Parameter(hidden = true) Principal principal
+    );
 }

@@ -96,4 +96,33 @@ public class MeetingRoomService {
         MeetingRoom saved = meetingRoomRepository.save(meetingRoom);
         return MeetingRoomResponse.from(saved);
     }
+
+    public List<ReservationResponse> getUserReservations(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        return reservationRepository.findActiveReservationsByMemberId(member.getId())
+                .stream()
+                .map(ReservationResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void cancelReservation(Long reservationId, String email) {
+        MeetingRoomReservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        if (!reservation.getMember().getId().equals(member.getId())) {
+            throw new IllegalStateException("본인의 예약만 취소할 수 있습니다.");
+        }
+
+        if (reservation.getStatus() == MeetingRoomReservation.ReservationStatus.CANCELLED) {
+            throw new IllegalStateException("이미 취소된 예약입니다.");
+        }
+
+        reservation.cancel();
+    }
 }
