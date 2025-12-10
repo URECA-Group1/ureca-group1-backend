@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 class MeetingRoomConcurrencyTest {
 
     private MeetingRoomService meetingRoomService;
-    private MeetingRoomFacadeService meetingRoomFacadeService;
+    private MeetingRoomLockService meetingRoomFacadeService;
     private DistributedLock distributedLock;
 
     @Mock
@@ -61,7 +61,7 @@ class MeetingRoomConcurrencyTest {
             memberRepository,
             redisTemplate
         );
-        meetingRoomFacadeService = new MeetingRoomFacadeService(distributedLock, meetingRoomService);
+        meetingRoomFacadeService = new MeetingRoomLockService(distributedLock, meetingRoomService);
     }
 
     @Test
