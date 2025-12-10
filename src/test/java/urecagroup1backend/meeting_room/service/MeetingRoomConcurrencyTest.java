@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
 class MeetingRoomConcurrencyTest {
 
     private MeetingRoomService meetingRoomService;
+    private MeetingRoomFacadeService meetingRoomFacadeService;
     private DistributedLock distributedLock;
 
     @Mock
@@ -54,8 +55,13 @@ class MeetingRoomConcurrencyTest {
     void setUp() {
         // 의존성 수동 주입
         distributedLock = new DistributedLock(redissonClient);
-        meetingRoomService = new MeetingRoomService(meetingRoomRepository, reservationRepository, memberRepository,
-                distributedLock, redisTemplate);
+        meetingRoomService = new MeetingRoomService(
+            meetingRoomRepository,
+            reservationRepository,
+            memberRepository,
+            redisTemplate
+        );
+        meetingRoomFacadeService = new MeetingRoomFacadeService(distributedLock, meetingRoomService);
     }
 
     @Test
@@ -102,7 +108,7 @@ class MeetingRoomConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    meetingRoomService.enterReservationPage(meetingRoomId, userEmail);
+                    meetingRoomFacadeService.enterReservationPage(meetingRoomId, userEmail);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();
