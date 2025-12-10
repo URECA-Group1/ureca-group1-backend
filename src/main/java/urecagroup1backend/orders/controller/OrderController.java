@@ -64,7 +64,8 @@ public class OrderController implements OrderControllerDocs {
 
     // [결제 취소] - 주문 상태를 취소(CANCELED)로 변경
     @Override
-    public ApiResponse<OrderResponse> cancelOrder(@PathVariable Long orderId,
+    @PostMapping("/{orderId}/cancel")
+    public ApiResponse<OrderResponse> cancelOrder(@PathVariable("orderId") Long orderId,
                                                   @AuthenticationPrincipal CustomUserDetails user) {
         OrderResponse response = orderService.cancelOrder(orderId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "결제 취소 성공", response);
