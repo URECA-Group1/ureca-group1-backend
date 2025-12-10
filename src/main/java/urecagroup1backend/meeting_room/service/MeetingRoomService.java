@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -35,7 +34,6 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
-    private final DistributedLock distributedLock;
     private final RedisTemplate<String, Object> redisTemplate;
 
     public static final String MEETING_ROOM_STATUS_TOPIC = "meeting-room-status";
@@ -53,20 +51,15 @@ public class MeetingRoomService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 회의실 예약 생성 (비즈니스 로직만 담당)
+     * 분산락은 MeetingRoomFacadeService에서 처리
+     */
     @Transactional
     @Caching(evict = {
         @CacheEvict(value = "availableRooms", key = "'all'"),
         @CacheEvict(value = "userReservations", key = "#email")
     })
-    public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
-        String lockKey = "meeting-room:reservation:" + meetingRoomId;
-
-        return distributedLock.executeWithLock(lockKey, 5, 10, () -> {
-            return createReservation(meetingRoomId, email);
-        });
-    }
-
-    @Transactional
     public ReservationResponse createReservation(Long meetingRoomId, String email) {
         MeetingRoom meetingRoom = meetingRoomRepository.findById(meetingRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("회의실을 찾을 수 없습니다."));

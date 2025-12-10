@@ -56,15 +56,20 @@ class MeetingRoomCachePureJavaTest {
                 MeetingRoomRepository meetingRoomRepository,
                 MeetingRoomReservationRepository reservationRepository,
                 MemberRepository memberRepository,
-                DistributedLock distributedLock,
-                RedisTemplate<String, Object> redisTemplate) { // redisTemplate 주입
+                RedisTemplate<String, Object> redisTemplate) {
             return new MeetingRoomService(
                     meetingRoomRepository,
                     reservationRepository,
                     memberRepository,
-                    distributedLock,
-                    redisTemplate // 생성자에 전달
+                    redisTemplate
             );
+        }
+
+        @Bean
+        public MeetingRoomFacadeService meetingRoomFacadeService(
+                DistributedLock distributedLock,
+                MeetingRoomService meetingRoomService) {
+            return new MeetingRoomFacadeService(distributedLock, meetingRoomService);
         }
 
         @Bean
@@ -266,8 +271,8 @@ class MeetingRoomCachePureJavaTest {
                     .build();
         });
 
-        // when: @CacheEvict가 붙은 메서드 호출
-        service.enterReservationPage(1L, "test@test.com");
+        // when: @CacheEvict가 붙은 메서드 호출 (createReservation에 @CacheEvict 있음)
+        service.createReservation(1L, "test@test.com");
 
         // then: availableRooms 캐시 삭제됨
         assertThat(availableRoomsCache.get("all")).isNull();
