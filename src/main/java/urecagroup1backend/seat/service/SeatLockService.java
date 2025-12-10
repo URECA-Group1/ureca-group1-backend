@@ -8,7 +8,7 @@ import urecagroup1backend.seat.dto.SeatResponse;
 
 @Service
 @RequiredArgsConstructor
-public class SeatFacadeService {
+public class SeatLockService {
     private final DistributedLock distributedLock; // 분산 락을 위해 구현된 객체
     private final SeatService seatService;
 
