@@ -6,7 +6,7 @@ import urecagroup1backend.common.lock.DistributedLock;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
 
 /**
- * @file MeetingRoomFacadeService
+ * @file MeetingRoomLockService
  * @author 최인호
  * @description 미팅룸 Facade 서비스 - 분산락 처리
  *
@@ -17,7 +17,7 @@ import urecagroup1backend.meeting_room.dto.ReservationResponse;
  */
 @Service
 @RequiredArgsConstructor
-public class MeetingRoomFacadeService {
+public class MeetingRoomLockService {
 
     private final DistributedLock distributedLock;
     private final MeetingRoomService meetingRoomService;

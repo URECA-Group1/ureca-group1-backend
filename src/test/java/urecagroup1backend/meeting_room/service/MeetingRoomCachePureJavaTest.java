@@ -66,10 +66,10 @@ class MeetingRoomCachePureJavaTest {
         }
 
         @Bean
-        public MeetingRoomFacadeService meetingRoomFacadeService(
+        public MeetingRoomLockService meetingRoomFacadeService(
                 DistributedLock distributedLock,
                 MeetingRoomService meetingRoomService) {
-            return new MeetingRoomFacadeService(distributedLock, meetingRoomService);
+            return new MeetingRoomLockService(distributedLock, meetingRoomService);
         }
 
         @Bean

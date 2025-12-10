@@ -10,7 +10,7 @@ import urecagroup1backend.meeting_room.controller.docs.MeetingRoomControllerDocs
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
 import urecagroup1backend.meeting_room.dto.ReservationRequest;
 import urecagroup1backend.meeting_room.dto.ReservationResponse;
-import urecagroup1backend.meeting_room.service.MeetingRoomFacadeService;
+import urecagroup1backend.meeting_room.service.MeetingRoomLockService;
 import urecagroup1backend.meeting_room.service.MeetingRoomService;
 
 /**
@@ -25,7 +25,7 @@ import urecagroup1backend.meeting_room.service.MeetingRoomService;
 public class MeetingRoomController implements MeetingRoomControllerDocs {
 
     private final MeetingRoomService meetingRoomService;
-    private final MeetingRoomFacadeService meetingRoomFacadeService;
+    private final MeetingRoomLockService meetingRoomFacadeService;
 
     @Override
     @GetMapping("/available")
