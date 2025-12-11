@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import urecagroup1backend.common.domain.BaseTimeEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Data
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
