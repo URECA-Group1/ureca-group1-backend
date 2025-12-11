@@ -52,7 +52,7 @@ public class GoogleOAuth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
         response.addCookie(jwtCookie);
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("https://urecastudycafe.store");
     }
 
 }

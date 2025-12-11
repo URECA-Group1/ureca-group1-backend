@@ -59,6 +59,6 @@ public class KakaoOAuth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         response.addCookie(jwtCookie);
 
         // Next.js 클라이언트로 리다이렉트
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("https://urecastudycafe.store");
     }
 }
