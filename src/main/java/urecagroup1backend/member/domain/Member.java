@@ -18,6 +18,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 일반 로그인 안 써서 안 씀
 //    @Column(nullable = false)
 //    @NotNull
     private String password;
@@ -26,6 +27,7 @@ public class Member {
 //    @NotNull
     private String name;
 
+    // google의 name, 카카오의 닉네임 모두 name으로 통일한다. (안 씀)
 //    @Column(nullable = false)
 //    @NotNull
     private String nickName;
@@ -42,5 +44,7 @@ public class Member {
     @NotNull
     private SocialType socialType;
 
+    @Column(nullable = false, unique = true)
+    @NotNull
     private String socialId;
 }

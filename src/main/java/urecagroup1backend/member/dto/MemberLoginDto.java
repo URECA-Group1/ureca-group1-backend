@@ -1,3 +1,6 @@
+// 일반 로그인 안 써서 안 씀
+
+
 package urecagroup1backend.member.dto;
 
 import lombok.AllArgsConstructor;
@@ -11,3 +14,4 @@ public class MemberLoginDto {
     private String email;
     private String password;
 }
+

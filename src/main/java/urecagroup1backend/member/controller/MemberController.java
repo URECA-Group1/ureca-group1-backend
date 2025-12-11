@@ -12,6 +12,7 @@ import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.domain.SocialType;
 import urecagroup1backend.member.dto.MemberCreateDto;
 import urecagroup1backend.member.dto.MemberLoginDto;
+import urecagroup1backend.member.dto.RefreshTokenReqDto;
 import urecagroup1backend.member.service.MemberService;
 import urecagroup1backend.oauth.JwtTokenProvider;
 import urecagroup1backend.oauth.dto.AccessTokenDto;
@@ -27,12 +28,12 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/member")
-public class MemberController implements MemberControllerDocs {
+@RequestMapping("api/members")
+public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final GoogleService googleService;
-    private final KakaoService kakaoService;
+//    private final GoogleService googleService;
+//    private final KakaoService kakaoService;
 
     /* 일반 계정 회원 가입
     @PostMapping("/create")
@@ -64,7 +65,7 @@ public class MemberController implements MemberControllerDocs {
      */
 
 
-    // 구글 로그인
+    /* 구글 로그인 (JWT 방식, Spring Security와 겹쳐서 주석처리)
     @PostMapping("/google/doLogin")
     public ApiResponse<?> googleLogin(@RequestBody RedirectDto redirectDto) {
         // accessToken 발급
@@ -88,8 +89,9 @@ public class MemberController implements MemberControllerDocs {
 
         return new ApiResponse<>(HttpStatus.OK, "구글 로그인에 성공했습니다.", loginInfo);
     }
+    */
 
-    // 카카오 로그인
+    /* 카카오 로그인 (JWT 방식, Spring Security와 겹쳐서 주석처리)
     @PostMapping("/kakao/doLogin")
     public ApiResponse<?> kakaoLogin(@RequestBody RedirectDto redirectDto) {
         // accessToken 발급
@@ -113,6 +115,7 @@ public class MemberController implements MemberControllerDocs {
 
         return new ApiResponse<>(HttpStatus.OK, "카카오 로그인에 성공했습니다.", loginInfo);
     }
+     */
 
     // 내 로그인 정보 가져오기
     @GetMapping("/me")
@@ -123,6 +126,30 @@ public class MemberController implements MemberControllerDocs {
         loginInfo.put("name", user.getName());
 
         return new ApiResponse<>(HttpStatus.OK, "내 로그인 정보", loginInfo);
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ApiResponse<?> logout(@AuthenticationPrincipal CustomUserDetails user) {
+        // memberService.logout 로직 구현
+
+        return new ApiResponse<>(HttpStatus.OK, "로그아웃 성공", null);
+    }
+
+    @PostMapping("/token/refresh")
+    public ApiResponse<?> refreshToken(@RequestBody RefreshTokenReqDto refreshTokenReqDto) {
+        String oldRefreshToken = refreshTokenReqDto.getRefreshToken();
+
+        // AuthService 토큰 유효 확인 로직 구현
+
+//
+//        if(!jwtTokenProvider.validateToken(oldRefreshToken)) {
+//            return new ApiResponse<>(HttpStatus.UNAUTHORIZED, "유효하지 않거나 만료된 Refresh Token입니다.", null);
+//        }
+
+        // null 수정 필요
+        return new ApiResponse<>(HttpStatus.OK, "AccessToken 갱신 완료", null);
+
     }
 
 
