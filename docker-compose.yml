@@ -15,52 +15,32 @@ services:
       timeout: 3s
       retries: 3
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
   #  Kafka
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
-    hostname: kafka
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
     environment:
-      # --- KRaft 필수 설정 ---
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
-
-      # 리스너 설정 (내부용, 외부용, 컨트롤러용 구분)
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
-      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-
-      # 데이터 저장 경로
-      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
-
-      # KRaft 모드는 이 ID가 있어야 스토리지를 포맷하고 실행된다.
-      # Base64로 인코딩된 UUID
-      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
-
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-
-  # Kafka UI
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "8085:8080"
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      # Kafka UI는 도커 내부망(29092)으로 접속합니다
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
-    depends_on:
-      - kafka
+      # 로컬은 램이 많으니 512MB 정도 줘도 됩니다. (생략해도 무방)
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms512M"
 
 volumes:
   mysql-data:
