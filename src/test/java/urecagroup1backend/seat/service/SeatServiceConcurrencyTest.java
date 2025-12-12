@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class SeatServiceConcurrencyTest {
     @Autowired
-    private SeatService seatService;
+    private SeatLockService seatLockService;
 
     @Autowired
     private SeatRepository seatRepository;
@@ -81,7 +81,7 @@ public class SeatServiceConcurrencyTest {
                     start.await(); // 동시에 시작
 
                     SeatReservationResponse response =
-                            seatService.tryReserveSeat(seat.getId(), userId);
+                            seatLockService.tryReserveSeat(seat.getId(), userId);
 
                     successCount.incrementAndGet();
                 } catch (Exception e) {
@@ -140,7 +140,7 @@ public class SeatServiceConcurrencyTest {
                 ready.countDown();
                 start.await();
 
-                seatService.tryReserveSeat(seat.getId(), 1L);
+                seatLockService.tryReserveSeat(seat.getId(), 1L);
                 reserveSuccess.incrementAndGet();
                 System.out.println("예약 성공 userId = " + 1L);
             } catch (Exception e) {
@@ -154,7 +154,7 @@ public class SeatServiceConcurrencyTest {
                 ready.countDown();
                 start.await();
 
-                SeatResponse response = seatService.tryEnterSeat(seat.getId(), 2L);
+                SeatResponse response = seatLockService.tryEnterSeat(seat.getId(), 2L);
                 enterSuccess.incrementAndGet();
                 System.out.println("입실 성공 userId = " + 2L);
             } catch (Exception e) {
@@ -215,7 +215,7 @@ public class SeatServiceConcurrencyTest {
                     ready.countDown();
                     start.await();
 
-                    seatService.tryEnterSeat(seat.getId(), userId);
+                    seatLockService.tryEnterSeat(seat.getId(), userId);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();

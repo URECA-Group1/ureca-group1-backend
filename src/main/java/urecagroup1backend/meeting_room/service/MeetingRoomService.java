@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import urecagroup1backend.common.lock.DistributedLockExecutor;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -35,8 +34,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final DistributedLockExecutor lockExecutor;
+    private final RedisTemplate<String, Object> redisTemplate;;
 
     public static final String MEETING_ROOM_STATUS_TOPIC = "meeting-room-status";
 
@@ -51,17 +49,6 @@ public class MeetingRoomService {
                         .isEmpty())
                 .map(MeetingRoomResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 회의실 예약 페이지 진입 (분산락 적용)
-     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
-     */
-    public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
-        return lockExecutor.executeWithLock(
-            "meeting-room:reservation:" + meetingRoomId,
-            () -> createReservation(meetingRoomId, email)
-        );
     }
 
     /**
