@@ -7,6 +7,8 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import urecagroup1backend.common.lock.DistributedLockExecutor;
+import urecagroup1backend.common.lock.DistributedLockOperation;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * @file MeetingRoomService
  * @author 최인호
- * @description 미팅룸 서비스
+ * @description 미팅룸 서비스 - 템플릿 메서드 패턴 통합
  */
 
 @Service
@@ -35,6 +37,7 @@ public class MeetingRoomService {
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final DistributedLockExecutor lockExecutor;
 
     public static final String MEETING_ROOM_STATUS_TOPIC = "meeting-room-status";
 
@@ -52,8 +55,26 @@ public class MeetingRoomService {
     }
 
     /**
-     * 회의실 예약 생성 (비즈니스 로직만 담당)
-     * 분산락은 MeetingRoomFacadeService에서 처리
+     * 회의실 예약 페이지 진입 (분산락 적용)
+     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     */
+    public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
+        return lockExecutor.execute(new DistributedLockOperation<ReservationResponse>() {
+            @Override
+            protected String getLockKey() {
+                return "meeting-room:reservation:" + meetingRoomId;
+            }
+
+            @Override
+            protected ReservationResponse executeBusinessLogic() {
+                return createReservation(meetingRoomId, email);
+            }
+        });
+    }
+
+    /**
+     * 회의실 예약 생성 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 enterReservationPage에서 처리
      */
     @Transactional
     @Caching(evict = {

@@ -4,6 +4,8 @@ package urecagroup1backend.seat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import urecagroup1backend.common.lock.DistributedLockExecutor;
+import urecagroup1backend.common.lock.DistributedLockOperation;
 import urecagroup1backend.seat.domain.SeatStatus;
 import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
@@ -18,12 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @file SeatService
+ * @description 좌석 서비스 - 템플릿 메서드 패턴 통합
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SeatService {
     private final SeatRepository seatRepository;
     private final SeatReservationRepository seatReservationRepository;
+    private final DistributedLockExecutor lockExecutor;
 
     // 전체 좌석 조회
     @Transactional
@@ -74,7 +81,28 @@ public class SeatService {
         return seatReservationResponseList;
     }
 
-    // 예약
+    /**
+     * 좌석 예약 시도 (분산락 적용)
+     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     */
+    public SeatReservationResponse tryReserveSeat(Long seatId, Long userId) {
+        return lockExecutor.execute(new DistributedLockOperation<SeatReservationResponse>() {
+            @Override
+            protected String getLockKey() {
+                return "seat:" + seatId;
+            }
+
+            @Override
+            protected SeatReservationResponse executeBusinessLogic() {
+                return reserveSeat(seatId, userId);
+            }
+        });
+    }
+
+    /**
+     * 좌석 예약 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 tryReserveSeat에서 처리
+     */
     @Transactional
     public SeatReservationResponse reserveSeat(Long seatId, Long userId) {
         Seat seat = seatRepository.findById(seatId)
@@ -140,7 +168,28 @@ public class SeatService {
     }
 
 
-    // 입실
+    /**
+     * 좌석 입실 시도 (분산락 적용)
+     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     */
+    public SeatResponse tryEnterSeat(Long seatId, Long userId) {
+        return lockExecutor.execute(new DistributedLockOperation<SeatResponse>() {
+            @Override
+            protected String getLockKey() {
+                return "seat:" + seatId;
+            }
+
+            @Override
+            protected SeatResponse executeBusinessLogic() {
+                return enterSeat(seatId, userId);
+            }
+        });
+    }
+
+    /**
+     * 좌석 입실 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 tryEnterSeat에서 처리
+     */
     @Transactional
     public SeatResponse enterSeat(Long seatId, Long userId) {
         Seat seat = seatRepository.findById(seatId)
