@@ -1,0 +1,22 @@
+version: 0.0
+os: linux
+files:
+  - source:  / # 가져올 파일 경로 (전체)
+    destination: /home/ec2-user/app/step2/zip/ # EC2에 저장될 경로
+    overwrite: yes
+
+permissions: # 권한 설정
+  - object: /
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+
+hooks:
+  AfterInstall: # 파일 설치 후 실행할 스크립트
+    - location: scripts/stop.sh # 기존 서버 중지 스크립트
+      timeout: 60
+      runas: ec2-user
+  ApplicationStart: # 애플리케이션 시작 시 실행할 스크립트
+    - location: scripts/start.sh # 자바 실행 스크립트 (java -jar ...)
+      timeout: 60
+      runas: ec2-user
