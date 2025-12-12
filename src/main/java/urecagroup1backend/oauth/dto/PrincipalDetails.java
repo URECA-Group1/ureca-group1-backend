@@ -8,6 +8,8 @@ import urecagroup1backend.member.domain.Member;
 import java.util.Collection;
 import java.util.Map;
 
+// 안씀
+
 /*
 @file PrincipalDetails.java
 @author 신형서

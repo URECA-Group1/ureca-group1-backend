@@ -12,6 +12,8 @@ import urecagroup1backend.member.repository.MemberRepository;
 
 import java.util.Optional;
 
+// 안씀
+
 @RequiredArgsConstructor
 @Service
 @Transactional

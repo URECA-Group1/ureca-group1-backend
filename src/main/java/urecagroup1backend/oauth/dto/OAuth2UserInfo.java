@@ -6,6 +6,8 @@ import urecagroup1backend.member.domain.Member;
 
 import java.util.Map;
 
+// 안씀
+
 /*
 @file OAuth2UserInfo.java
 @author 신형서

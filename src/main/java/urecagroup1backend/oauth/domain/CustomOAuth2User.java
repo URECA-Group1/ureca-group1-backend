@@ -1,31 +1,22 @@
-package urecagroup1backend.member.domain;
+package urecagroup1backend.oauth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+
+// 안씀
+
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import urecagroup1backend.member.domain.SocialType;
 import urecagroup1backend.member.dto.MemberDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-/*
-@file CustomUserDetails.java
-@author 신형서
-@since 2025-11-28
-@description 다른 로직에서 현재 로그인된 사용자의 정보가 필요할 때 사용
-*/
-
-@Builder
-@Getter
-public class CustomUserDetails implements OAuth2User, UserDetails {
+// 안씀
+public class CustomOAuth2User implements OAuth2User {
     private final MemberDto memberDto;
 
-    public CustomUserDetails(MemberDto memberDto) {
+    public CustomOAuth2User(MemberDto memberDto) {
         this.memberDto = memberDto;
     }
 
@@ -50,19 +41,6 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
         return collection;
     }
 
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return memberDto.getName();
-    }
-
-    public Long getId() {
-        return memberDto.getId();
-    }
     @Override
     public String getName() {
         return memberDto.getName();

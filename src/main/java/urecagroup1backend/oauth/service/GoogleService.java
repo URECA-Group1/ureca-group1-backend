@@ -10,6 +10,7 @@ import org.springframework.web.client.RestClient;
 import urecagroup1backend.oauth.dto.AccessTokenDto;
 import urecagroup1backend.oauth.dto.GoogleProfileDto;
 
+// 안씀
 @Service
 @Transactional
 public class GoogleService {

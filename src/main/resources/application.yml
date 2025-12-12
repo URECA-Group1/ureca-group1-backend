@@ -38,7 +38,7 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client_secret: ${GOOGLE_CLIENT_SECRET}
-            scope: openid, email, profile
+            scope: email, profile
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
           kakao:
@@ -71,3 +71,11 @@ swagger:
 
 server:
   port: 8080
+
+
+logging:
+  level:
+    # Spring Security의 OAuth2 인증 과정을 자세히 출력
+    org.springframework.security.oauth2: DEBUG
+    # HTTP 통신 과정을 자세히 출력 (어떤 요청/응답에서 실패하는지 확인)
+    org.springframework.web: DEBUG

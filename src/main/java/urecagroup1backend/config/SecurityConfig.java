@@ -21,8 +21,6 @@ import urecagroup1backend.member.service.MemberService;
 import urecagroup1backend.oauth.JwtTokenFilter;
 import urecagroup1backend.oauth.OAuth2SuccessHandler;
 import urecagroup1backend.oauth.service.CustomOAuth2UserService;
-import urecagroup1backend.oauth.service.GoogleOAuth2LoginSuccess;
-import urecagroup1backend.oauth.service.KakaoOAuth2LoginSuccess;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -33,6 +31,7 @@ import java.util.Map;
 @since 2025-11-28
 @description Spring Security의 보안설정 담당
 */
+
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
@@ -41,6 +40,10 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
+    @Bean
+    public PasswordEncoder makePassword() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain myFilter(HttpSecurity httpSecurity) throws Exception {

@@ -13,6 +13,13 @@ import urecagroup1backend.common.domain.BaseTimeEntity;
 @Builder
 @Entity
 @Data
+
+/*
+@file Member.java
+@author 신형서
+@since 2025-11-28
+@description 회원 도메인
+*/
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -22,7 +29,7 @@ public class Member extends BaseTimeEntity {
     // 일반 로그인 안 써서 안 씀
 //    @Column(nullable = false)
 //    @NotNull
-    private String password;
+    // private String password;
 
 //    @Column(nullable = false)
 //    @NotNull
