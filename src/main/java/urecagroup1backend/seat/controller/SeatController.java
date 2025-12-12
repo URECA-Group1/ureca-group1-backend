@@ -10,6 +10,7 @@ import urecagroup1backend.seat.controller.docs.SeatControllerDocs;
 import urecagroup1backend.seat.dto.SeatCreationRequest;
 import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
+import urecagroup1backend.seat.service.SeatLockService;
 import urecagroup1backend.seat.service.SeatService;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 public class SeatController implements SeatControllerDocs {
     private final SeatService seatService;
+    private final SeatLockService seatLockService;
 
     // 전체 좌석 불러오기
     @GetMapping
@@ -33,8 +35,11 @@ public class SeatController implements SeatControllerDocs {
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
+        // SeatReservationResponse response = seatService.reserveSeat(seatId, user.getId());
+
         // 분산 락 적용
-        SeatReservationResponse response = seatService.tryReserveSeat(seatId, user.getId());
+        SeatReservationResponse response = seatLockService.tryReserveSeat(seatId, user.getId());
+
         return new ApiResponse<>(HttpStatus.OK, "좌석 예약 성공", response);
     }
 
@@ -54,8 +59,10 @@ public class SeatController implements SeatControllerDocs {
             @PathVariable Long seatId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
+        // SeatResponse response = seatService.enterSeat(seatId, user.getId());
+
         // 분산 락 적용
-        SeatResponse response = seatService.tryEnterSeat(seatId, user.getId());
+        SeatResponse response = seatLockService.tryEnterSeat(seatId, user.getId());
         return new ApiResponse<>(HttpStatus.OK, "좌석 입실 성공", response);
     }
 

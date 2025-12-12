@@ -4,7 +4,6 @@ package urecagroup1backend.seat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import urecagroup1backend.common.lock.DistributedLockExecutor;
 import urecagroup1backend.seat.domain.SeatStatus;
 import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
@@ -29,7 +28,6 @@ import java.util.Optional;
 public class SeatService {
     private final SeatRepository seatRepository;
     private final SeatReservationRepository seatReservationRepository;
-    private final DistributedLockExecutor lockExecutor;
 
     // 전체 좌석 조회
     @Transactional
@@ -78,17 +76,6 @@ public class SeatService {
         }
 
         return seatReservationResponseList;
-    }
-
-    /**
-     * 좌석 예약 시도 (분산락 적용)
-     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
-     */
-    public SeatReservationResponse tryReserveSeat(Long seatId, Long userId) {
-        return lockExecutor.executeWithLock(
-            "seat:" + seatId,
-            () -> reserveSeat(seatId, userId)
-        );
     }
 
     /**
@@ -157,18 +144,6 @@ public class SeatService {
         }
 
         return SeatReservationResponse.from(seatReservation);
-    }
-
-
-    /**
-     * 좌석 입실 시도 (분산락 적용)
-     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
-     */
-    public SeatResponse tryEnterSeat(Long seatId, Long userId) {
-        return lockExecutor.executeWithLock(
-            "seat:" + seatId,
-            () -> enterSeat(seatId, userId)
-        );
     }
 
     /**
