@@ -74,9 +74,11 @@ public class JwtTokenProvider {
         String name = "";
         String profileUrl = "";
         String socialType = "";
+        Long id = 0L;
 
         if (principal instanceof CustomUserDetails) {
             CustomUserDetails customUser = (CustomUserDetails) principal;
+            id = customUser.getId();
             name = customUser.getName();
             profileUrl = customUser.getProfile();
             socialType = customUser.getSocialType() != null ? customUser.getSocialType().name() : "";
@@ -84,6 +86,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName()) // 보통 사용자 ID 또는 Email
+                .claim("memberId", id)
                 .claim("ROLE", authorities)
                 .claim("name", name)
                 .claim("profile", profileUrl)
