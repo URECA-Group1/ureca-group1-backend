@@ -10,6 +10,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import urecagroup1backend.common.lock.DistributedLock;
+import urecagroup1backend.common.lock.DistributedLockExecutor;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.repository.MeetingRoomRepository;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.*;
 class MeetingRoomConcurrencyTest {
 
     private MeetingRoomService meetingRoomService;
-    private MeetingRoomLockService meetingRoomFacadeService;
     private DistributedLock distributedLock;
 
     @Mock
@@ -55,13 +55,14 @@ class MeetingRoomConcurrencyTest {
     void setUp() {
         // 의존성 수동 주입
         distributedLock = new DistributedLock(redissonClient);
+        DistributedLockExecutor lockExecutor = new DistributedLockExecutor(distributedLock);
         meetingRoomService = new MeetingRoomService(
             meetingRoomRepository,
             reservationRepository,
             memberRepository,
-            redisTemplate
+            redisTemplate,
+            lockExecutor
         );
-        meetingRoomFacadeService = new MeetingRoomLockService(distributedLock, meetingRoomService);
     }
 
     @Test
@@ -108,7 +109,7 @@ class MeetingRoomConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    meetingRoomFacadeService.enterReservationPage(meetingRoomId, userEmail);
+                    meetingRoomService.enterReservationPage(meetingRoomId, userEmail);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();

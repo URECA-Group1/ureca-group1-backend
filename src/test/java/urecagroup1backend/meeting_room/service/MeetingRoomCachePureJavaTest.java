@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import urecagroup1backend.common.lock.DistributedLock;
+import urecagroup1backend.common.lock.DistributedLockExecutor;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -56,20 +57,15 @@ class MeetingRoomCachePureJavaTest {
                 MeetingRoomRepository meetingRoomRepository,
                 MeetingRoomReservationRepository reservationRepository,
                 MemberRepository memberRepository,
-                RedisTemplate<String, Object> redisTemplate) {
+                RedisTemplate<String, Object> redisTemplate,
+                DistributedLockExecutor lockExecutor) {
             return new MeetingRoomService(
                     meetingRoomRepository,
                     reservationRepository,
                     memberRepository,
-                    redisTemplate
+                    redisTemplate,
+                    lockExecutor
             );
-        }
-
-        @Bean
-        public MeetingRoomLockService meetingRoomFacadeService(
-                DistributedLock distributedLock,
-                MeetingRoomService meetingRoomService) {
-            return new MeetingRoomLockService(distributedLock, meetingRoomService);
         }
 
         @Bean
@@ -99,6 +95,11 @@ class MeetingRoomCachePureJavaTest {
                         return null;
                     });
             return lock;
+        }
+
+        @Bean
+        public DistributedLockExecutor distributedLockExecutor(DistributedLock distributedLock) {
+            return new DistributedLockExecutor(distributedLock);
         }
 
         @Bean
