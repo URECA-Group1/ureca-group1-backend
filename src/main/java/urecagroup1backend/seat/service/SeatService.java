@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.common.lock.DistributedLockExecutor;
-import urecagroup1backend.common.lock.DistributedLockOperation;
 import urecagroup1backend.seat.domain.SeatStatus;
 import urecagroup1backend.seat.dto.SeatReservationResponse;
 import urecagroup1backend.seat.dto.SeatResponse;
@@ -22,7 +21,7 @@ import java.util.Optional;
 
 /**
  * @file SeatService
- * @description 좌석 서비스 - 템플릿 메서드 패턴 통합
+ * @description 좌석 서비스 - 람다 기반 분산락 적용
  */
 @Service
 @RequiredArgsConstructor
@@ -83,20 +82,13 @@ public class SeatService {
 
     /**
      * 좌석 예약 시도 (분산락 적용)
-     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
      */
     public SeatReservationResponse tryReserveSeat(Long seatId, Long userId) {
-        return lockExecutor.execute(new DistributedLockOperation<SeatReservationResponse>() {
-            @Override
-            protected String getLockKey() {
-                return "seat:" + seatId;
-            }
-
-            @Override
-            protected SeatReservationResponse executeBusinessLogic() {
-                return reserveSeat(seatId, userId);
-            }
-        });
+        return lockExecutor.executeWithLock(
+            "seat:" + seatId,
+            () -> reserveSeat(seatId, userId)
+        );
     }
 
     /**
@@ -170,20 +162,13 @@ public class SeatService {
 
     /**
      * 좌석 입실 시도 (분산락 적용)
-     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
      */
     public SeatResponse tryEnterSeat(Long seatId, Long userId) {
-        return lockExecutor.execute(new DistributedLockOperation<SeatResponse>() {
-            @Override
-            protected String getLockKey() {
-                return "seat:" + seatId;
-            }
-
-            @Override
-            protected SeatResponse executeBusinessLogic() {
-                return enterSeat(seatId, userId);
-            }
-        });
+        return lockExecutor.executeWithLock(
+            "seat:" + seatId,
+            () -> enterSeat(seatId, userId)
+        );
     }
 
     /**

@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.common.lock.DistributedLockExecutor;
-import urecagroup1backend.common.lock.DistributedLockOperation;
 import urecagroup1backend.meeting_room.domain.MeetingRoom;
 import urecagroup1backend.meeting_room.domain.MeetingRoomReservation;
 import urecagroup1backend.meeting_room.dto.MeetingRoomResponse;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @file MeetingRoomService
  * @author 최인호
- * @description 미팅룸 서비스 - 템플릿 메서드 패턴 통합
+ * @description 미팅룸 서비스 - 람다 기반 분산락 적용
  */
 
 @Service
@@ -56,20 +55,13 @@ public class MeetingRoomService {
 
     /**
      * 회의실 예약 페이지 진입 (분산락 적용)
-     * 템플릿 메서드 패턴으로 Lock { Transaction { 비즈니스 로직 } } 순서 보장
+     * Lock { Transaction { 비즈니스 로직 } } 순서 보장
      */
     public ReservationResponse enterReservationPage(Long meetingRoomId, String email) {
-        return lockExecutor.execute(new DistributedLockOperation<ReservationResponse>() {
-            @Override
-            protected String getLockKey() {
-                return "meeting-room:reservation:" + meetingRoomId;
-            }
-
-            @Override
-            protected ReservationResponse executeBusinessLogic() {
-                return createReservation(meetingRoomId, email);
-            }
-        });
+        return lockExecutor.executeWithLock(
+            "meeting-room:reservation:" + meetingRoomId,
+            () -> createReservation(meetingRoomId, email)
+        );
     }
 
     /**
