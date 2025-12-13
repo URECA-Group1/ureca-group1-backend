@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import urecagroup1backend.common.exception.InvalidTokenException;
 import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.dto.MemberDto;
@@ -16,6 +17,7 @@ import urecagroup1backend.auth.provider.JwtTokenProvider;
 import urecagroup1backend.auth.domain.Token;
 import urecagroup1backend.auth.repository.TokenRepository;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /*
@@ -65,7 +67,9 @@ public class AuthService {
     public TokenResDto reissueToken(String refreshToken) {
         // RefreshToken 유효성 검증
         if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("리프레시 토큰이 유효하지 않음");
+            log.warn("Refresh Token 유효성 검증 실패: {}", refreshToken);
+
+            throw new InvalidTokenException("유효하지 않거나 만료된 Refresh Token입니다.");
         }
 
         // Refresh Token에서 사용자 정보 추출
@@ -76,30 +80,28 @@ public class AuthService {
             String subjectUsed = claims.getSubject();
             log.error("Refresh Token의 ID가 누락되었습니다. Subject 값: {}", subjectUsed);
 
-            throw new IllegalArgumentException("토큰에서 Member ID를 찾을 수 없습니다.");
+            throw new InvalidTokenException("토큰에서 Member ID를 찾을 수 없습니다.");
         }
 
         // Redis에 저장된 토큰과 일치 여부 확인
         Optional<Token> storedToken = tokenRepository.findById(id);
 
-        // 저장된 리프레시 토큰 없거나 값이 다르면
-        if(storedToken.isEmpty()) {
-            log.warn("Redis 저장소의 Refresh Token 만료. Member ID: {}", id);
-            // 보안: 만약 불일치하면 DB와 Redis의 토큰 쌍을 모두 삭제하여 탈취된 토큰으로 인한 피해 확산 방지 로직 필요
-            throw new IllegalArgumentException("Redis 저장소의 Refresh Token 만료.");
+        // 4. 보안 검증: Redis 저장소 토큰과 불일치 시 모든 토큰 무효화 (탈취 방지)
+        if(storedToken.isEmpty() || !storedToken.get().getRefreshToken().equals(refreshToken)) {
+            log.warn("Refresh Token 불일치/만료 감지. Member ID: {}. 모든 토큰 무효화 조치.", id);
+
+            // Redis에 남아있는 토큰이 있다면 삭제하여 완전 무효화
+            if (storedToken.isPresent()) {
+                tokenRepository.deleteById(id);
+            }
+
+            // 재로그인을 강제
+            throw new InvalidTokenException("보안 위험 감지. 재로그인이 필요합니다."); // 예외 명확화 및 보안 강화
         }
 
-        log.info("[log] 리프레시토큰 id: {}, 저장소 : {}, 방금: {}", storedToken.get().getId(), storedToken.get().getRefreshToken(), refreshToken);
-
-        if(!storedToken.get().getRefreshToken().equals(refreshToken)) {
-            log.warn("Redis 저장소의 Refresh Token 불일치. Member ID: {}", id);
-            // 보안: 만약 불일치하면 DB와 Redis의 토큰 쌍을 모두 삭제하여 탈취된 토큰으로 인한 피해 확산 방지 로직 필요
-            throw new IllegalArgumentException("Redis 저장소의 Refresh Token 불일치");
-        }
-
-        // 새로운 토큰 발급을 위한 AUthentication 객체 생성
+        // 새로운 토큰 발급을 위한 Authentication 객체 생성
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 회원입니다."));
+                .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
 
         MemberDto memberDto = MemberDto.builder()
                 .id(member.getId())

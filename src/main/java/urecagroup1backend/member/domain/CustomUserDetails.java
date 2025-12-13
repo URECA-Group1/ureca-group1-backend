@@ -9,6 +9,7 @@ import urecagroup1backend.member.dto.MemberDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -34,18 +35,7 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-                return null; // 권한 분리 없음
-            }
-        });
-
-        return collection;
+        return List.of(() -> "ROLE_USER");
     }
 
     @Override
@@ -53,17 +43,20 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
         return null;
     }
 
+    // 회원마다 구분되는 고유한 값 필요
     @Override
     public String getUsername() {
-        return memberDto.getName();
+        return memberDto.getEmail();
     }
 
     public Long getId() {
         return memberDto.getId();
     }
+
+    // 회원마다 구분되는 고유한 값 필요
     @Override
     public String getName() {
-        return memberDto.getName();
+        return memberDto.getEmail();
     }
 
     public String getEmail() {
