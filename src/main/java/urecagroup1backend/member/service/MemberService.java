@@ -1,71 +1,37 @@
 package urecagroup1backend.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import urecagroup1backend.member.domain.Member;
-import urecagroup1backend.member.domain.SocialType;
-import urecagroup1backend.member.dto.MemberCreateDto;
-import urecagroup1backend.member.dto.MemberLoginDto;
+import urecagroup1backend.member.dto.MemberDto;
 import urecagroup1backend.member.repository.MemberRepository;
 
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
-// 안씀
+/*
+@file MemberService.java
+@author 신형서
+@since 2025-11-28
+@description 회원 서비스
+*/
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    /* 일반 회원 가입
-    public Member create(MemberCreateDto memberCreateDto) {
-        Member member = Member.builder()
-                .email(memberCreateDto.getEmail())
-                .password(passwordEncoder.encode(memberCreateDto.getPassword()))
+    public MemberDto getMemberInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("해당 이메일로 등록된 사용자를 찾을 수 없습니다."));
+
+        return MemberDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .name(member.getName())
+                .profileUrl(member.getProfileImgUrl())
+                .socialType(member.getSocialType())
                 .build();
-
-
-        memberRepository.save(member);
-        return member;
     }
-    */
-
-
-    /* 일반 로그인
-    public Member login(MemberLoginDto memberLoginDto) {
-        Optional<Member> optMember = memberRepository.findByEmail(memberLoginDto.getEmail());
-
-        if(!optMember.isPresent()) {
-            throw new IllegalArgumentException("email이 존재하지 않습니다.");
-        }
-
-        Member member = optMember.get();
-        if(!passwordEncoder.matches(memberLoginDto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("password가 일치하지 않습니다.");
-        }
-
-        return member;
-    }
-    */
-
-    // SocialID로 이미 회원가입 되어 있는지 확인
-    public Member getMemberBySocialId(String socialId) {
-        return memberRepository.findBySocialId(socialId).orElse(null);
-    }
-
-    // 안씀
-//    public Member createOauth(String socialId, String email, SocialType socialType) {
-//        Member member = Member.builder()
-//                .email(email)
-//                .socialType(socialType)
-//                .socialId(socialId)
-//                .build();
-//
-//        memberRepository.save(member);
-//        return member;
-//    }
 }

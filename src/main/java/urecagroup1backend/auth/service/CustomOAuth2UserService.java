@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth.service;
+package urecagroup1backend.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,17 +12,15 @@ import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.member.domain.Member;
 import urecagroup1backend.member.dto.MemberDto;
 import urecagroup1backend.member.repository.MemberRepository;
-import urecagroup1backend.oauth.domain.CustomOAuth2User;
-import urecagroup1backend.oauth.dto.*;
+import urecagroup1backend.auth.dto.*;
 
-import java.util.Map;
 import java.util.Optional;
 
 /*
 @file CustomOAuth2UserService.java
 @author 신형서
 @since 2025-12-11
-@description SecurityConfig에서 로그인 성공 이후 사용자 정보 가져오는 클래스
+@description SecurityConfig에서 로그인 성공 이후 사용자 정보 가져오는 서비스
 */
 
 @Slf4j
@@ -36,8 +34,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info(">>>> CustomOAuth2UserService loadUser 메서드 진입");
         OAuth2User oAuth2User = super.loadUser(userRequest);
-
-        // System.out.println(oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;

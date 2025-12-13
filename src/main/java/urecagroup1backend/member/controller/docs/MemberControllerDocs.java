@@ -16,6 +16,13 @@ import urecagroup1backend.member.domain.CustomUserDetails;
 
 import java.util.Map;
 
+/*
+@file MemberController.java
+@author 신형서
+@since 2025-11-29
+@description 회원 API Swagger 명세서
+*/
+
 @Tag(name = "회원 및 인증 (Member & Auth)", description = "회원 정보 조회, 토큰 기반 인증 및 로그아웃 관리")
 public interface MemberControllerDocs {
 

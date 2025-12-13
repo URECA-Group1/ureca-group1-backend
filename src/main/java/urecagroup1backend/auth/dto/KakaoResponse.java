@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth.dto;
+package urecagroup1backend.auth.dto;
 
 import urecagroup1backend.member.domain.SocialType;
 
@@ -19,7 +19,6 @@ public class KakaoResponse implements OAuth2Response {
     public KakaoResponse(Map<String, Object> attribute) {
         this.attribute = attribute;
         this.kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
-
 
         if(this.kakaoAccount != null) {
             this.profile = (Map<String, Object>)this.kakaoAccount.get("profile");

@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth;
+package urecagroup1backend.auth.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import urecagroup1backend.auth.provider.JwtTokenProvider;
 
 import java.io.IOException;
 
@@ -24,7 +25,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -33,11 +33,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
         logger.info("[log] AccessToken 검증 시작");
+
         // 1. JWT 토큰 추출
         String jwtToken = jwtTokenProvider.resolveToken(request);
-        logger.info("[log] Extracted Token: " + (jwtToken != null ? jwtToken.substring(0, 15) + "..." : "NULL")); // 👈 로그 추가 (전체 토큰은 길므로 일부만)
+        logger.info("[log] Extracted Token: " + (jwtToken != null ? jwtToken.substring(0, 15) + "..." : "NULL"));
 
         try {
             if (jwtToken != null) {
@@ -50,7 +50,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     logger.info("[log] SecurityContext Status: AUTHENTICATED");
                 }
                 else {
-                    logger.warn("[log] Token Validation: FAILED (Expired or Invalid Signature)"); // 👈 만료 시 로그
+                    logger.warn("[log] Token Validation: FAILED (Expired or Invalid Signature)");
                 }
             }
 
@@ -59,20 +59,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             // 5. 토큰 파싱 또는 서명 오류 등 예외 처리 (401 응답)
-
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
 
             // 응답 메시지
             response.getWriter().write("{\"error\": \"Invalid or corrupted token.\"}");
-            return;
         }
     }
 
-    /**
-     * SecurityContextHolder에 Authentication 객체를 설정합니다.
-     */
+    // SecurityContextHolder에 Authentication 객체를 설정합니다.
     private void setAuthentication(String jwtToken) {
         // Provider를 사용하여 토큰에서 CustomUserDetails를 Principal로 갖는 인증 객체 생성
         Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);

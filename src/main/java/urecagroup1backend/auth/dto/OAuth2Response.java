@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth.dto;
+package urecagroup1backend.auth.dto;
 
 import urecagroup1backend.member.domain.SocialType;
 
@@ -8,8 +8,8 @@ import urecagroup1backend.member.domain.SocialType;
 @since 2025-12-11
 @description 로그인 응답값 공통 인터페이스
 */
-public interface OAuth2Response {
 
+public interface OAuth2Response {
     // 소셜 로그인 ID
     String getProviderId();
 

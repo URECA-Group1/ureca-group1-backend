@@ -2,9 +2,7 @@ package urecagroup1backend.member.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import java.util.Arrays;
 
-//
 /*
 @file SecurityConfig.java
 @author 신형서

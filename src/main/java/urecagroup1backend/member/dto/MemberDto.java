@@ -23,4 +23,5 @@ public class MemberDto {
     private String email;
     private String profileUrl;
     private SocialType socialType;
+    
 }

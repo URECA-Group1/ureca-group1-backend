@@ -1,6 +1,7 @@
 package urecagroup1backend.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,21 +10,16 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import urecagroup1backend.member.service.MemberService;
-import urecagroup1backend.oauth.JwtTokenFilter;
-import urecagroup1backend.oauth.OAuth2SuccessHandler;
-import urecagroup1backend.oauth.service.CustomOAuth2UserService;
+import urecagroup1backend.auth.filter.JwtTokenFilter;
+import urecagroup1backend.auth.handler.OAuth2SuccessHandler;
+import urecagroup1backend.auth.service.CustomOAuth2UserService;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /*
 @file SecurityConfig.java
@@ -35,15 +31,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
-
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    @Bean
-    public PasswordEncoder makePassword() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+    @Value("${app.front-url}")
+    private String frontUrl;
 
     @Bean
     public SecurityFilterChain myFilter(HttpSecurity httpSecurity) throws Exception {
@@ -74,7 +67,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList(frontUrl));
         configuration.setAllowedMethods(Arrays.asList("*")); // 모든 HTTP 메서드 허용
         configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더값 허용
         configuration.setAllowCredentials(true); // 자격 증명 허용

@@ -1,6 +1,5 @@
 package urecagroup1backend.member.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +9,6 @@ import urecagroup1backend.member.dto.MemberDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /*

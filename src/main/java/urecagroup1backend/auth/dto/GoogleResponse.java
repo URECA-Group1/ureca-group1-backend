@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth.dto;
+package urecagroup1backend.auth.dto;
 
 import urecagroup1backend.member.domain.SocialType;
 
@@ -15,10 +15,8 @@ public class GoogleResponse implements OAuth2Response {
     private final Map<String, Object> attribute;
 
     public GoogleResponse(Map<String, Object> attribute) {
-
         this.attribute = attribute;
     }
-
 
     @Override
     public String getProviderId() {

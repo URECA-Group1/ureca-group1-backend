@@ -73,7 +73,7 @@ server:
   port: 8080
 
 app:
-  front-redirect-url: http://localhost:3000
+  front-url: http://localhost:3000
 
 
 logging:

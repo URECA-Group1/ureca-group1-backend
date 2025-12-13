@@ -1,4 +1,4 @@
-package urecagroup1backend.oauth;
+package urecagroup1backend.auth.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,8 +19,6 @@ import org.springframework.util.StringUtils;
 import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.member.dto.MemberDto;
 import urecagroup1backend.member.domain.SocialType;
-import urecagroup1backend.oauth.domain.Token;
-import urecagroup1backend.oauth.repository.TokenRepository;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -37,7 +35,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
     private final String secretKey;
 
     @Getter
@@ -46,17 +43,15 @@ public class JwtTokenProvider {
     @Getter
     private final int REFRESH_EXPIRATION;
     private final SecretKey SECRET_KEY;
-    private final TokenRepository tokenRepository;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
                             @Value("${jwt.access-expiration}") int accessExpiration,
-                            @Value("${jwt.refresh-expiration}") int refreshExpiration, TokenRepository tokenRepository) {
+                            @Value("${jwt.refresh-expiration}") int refreshExpiration) {
         this.secretKey = secretKey;
         ACCESS_EXPIRATION = accessExpiration;
         REFRESH_EXPIRATION = refreshExpiration;
         // Base64 디코딩 후 SecretKeySpec 생성
         this.SECRET_KEY = new SecretKeySpec(Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
-        this.tokenRepository = tokenRepository;
     }
 
     // accessToken 발급
@@ -83,6 +78,7 @@ public class JwtTokenProvider {
             socialType = customUser.getSocialType() != null ? customUser.getSocialType().name() : "";
         }
 
+        // 액세스 토큰 조합 후 리턴
         return Jwts.builder()
                 .setSubject(authentication.getName()) // 보통 사용자 ID 또는 Email
                 .claim("memberId", id)
@@ -101,6 +97,7 @@ public class JwtTokenProvider {
 
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + REFRESH_EXPIRATION * 1000L * 60);
+
         // CustomUserDetails의 정보를 Claims에 추가
         Object principal = authentication.getPrincipal();
         Long id = 0L;
@@ -110,7 +107,6 @@ public class JwtTokenProvider {
             id = customUser.getId();
         }
 
-        // Claims claims = Jwts.claims().setSubject(Long.toString(id));
         Claims claims = Jwts.claims();
         claims.put("memberId", id);
 
@@ -180,11 +176,12 @@ public class JwtTokenProvider {
         return null;
     }
 
+    // 쿠키에서 리프레시 토큰 추출 (토큰 재발급 시 사용)
     public String resolveRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("refresh".equals(cookie.getName())) { // 👈 쿠키 이름 확인
+                if ("refresh".equals(cookie.getName())) { // 쿠키 이름 확인
                     return cookie.getValue();
                 }
             }
