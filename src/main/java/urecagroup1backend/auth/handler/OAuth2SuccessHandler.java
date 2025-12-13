@@ -70,8 +70,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private Cookie createCookie(String key, String value, int expiration) {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
-        // cookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
-        // cookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
+        cookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
+        cookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
         cookie.setMaxAge(expiration); // 만료시간 : Token 유효기간과 동일하게 맞추기
 
         return cookie;

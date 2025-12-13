@@ -63,8 +63,8 @@ public class MemberController implements MemberControllerDocs {
         // 리프레시토큰은 쿠키에 넣어서 보내기
         Cookie refreshCookie = new Cookie("refresh", newToken.getRefreshToken());
         refreshCookie.setPath("/");
-        // refreshCookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
-        // refreshCookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
+        refreshCookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
+        refreshCookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
         refreshCookie.setMaxAge(jwtTokenProvider.getREFRESH_EXPIRATION()); // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
         response.addCookie(refreshCookie);
 
