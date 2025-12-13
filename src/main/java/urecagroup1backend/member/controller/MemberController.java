@@ -60,7 +60,7 @@ public class MemberController implements MemberControllerDocs {
         // 액세스 토큰은 헤더에
         response.addHeader("Authorization", "Bearer " + newToken.getAccessToken());
 
-        // 리프레시토큰은 쿠키에 넣어서 보내기
+        // 리프레시 토큰은 쿠키에 넣어서 보내기
         Cookie refreshCookie = new Cookie("refresh", newToken.getRefreshToken());
         refreshCookie.setPath("/");
         refreshCookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
