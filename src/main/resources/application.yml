@@ -38,12 +38,12 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client_secret: ${GOOGLE_CLIENT_SECRET}
-            scope: openid, email, profile
+            scope: email, profile
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
-            scope: profile_nickname, account_email
+            scope: profile_nickname, profile_image, account_email
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
 
@@ -62,7 +62,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 3000 # accessToken 만료 시간 (분 단위)
+  access-expiration: 30 # accessToken 만료 시간 (분 단위)
+  refresh-expiration: 10080 # refreshToken 만료 시간 (분 단위) - 일주일
 
 
 swagger:
@@ -70,3 +71,13 @@ swagger:
 
 server:
   port: 8080
+
+app:
+  front-url: http://localhost:3000
+
+logging:
+  level:
+    # Spring Security의 OAuth2 인증 과정을 자세히 출력
+    org.springframework.security.oauth2: DEBUG
+    # HTTP 통신 과정을 자세히 출력 (어떤 요청/응답에서 실패하는지 확인)
+    org.springframework.web: DEBUG

@@ -55,8 +55,6 @@ public class OrderConcurrencyTest {
         // Member 엔티티의 socialType unique=true 제약 때문에 1명만 만들어야 함
         Member member = Member.builder()
                 .name("광클유저")
-                .nickName("Clicker")
-                .password("1234") // 엔티티 필드에 따라 필요시 추가
                 .email("user@test.com")
                 .socialType(SocialType.KAKAO) // 여기서 KAKAO는 DB에 딱 한 번만 들어감
                 .socialId("kakao_12345")
