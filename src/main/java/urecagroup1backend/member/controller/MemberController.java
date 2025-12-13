@@ -5,7 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import urecagroup1backend.config.ApiResponse;
@@ -61,12 +63,16 @@ public class MemberController implements MemberControllerDocs {
         response.addHeader("Authorization", "Bearer " + newToken.getAccessToken());
 
         // 리프레시 토큰은 쿠키에 넣어서 보내기
-        Cookie refreshCookie = new Cookie("refresh", newToken.getRefreshToken());
-        refreshCookie.setPath("/");
-        refreshCookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
-        refreshCookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
-        refreshCookie.setMaxAge(jwtTokenProvider.getREFRESH_EXPIRATION()); // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
-        response.addCookie(refreshCookie);
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh", newToken.getRefreshToken())
+            .path("/")
+            .secure(true) // https 에서만 전송 (운영환경에서만)
+            .httpOnly(true) // 클라이언트 속 JS 접근 불가 (XSS 방어)
+            .sameSite("None") // 백엔드 - 프론트엔드 URL이 달라서 추가 필요함
+            .domain(".urecastudycafe.store/") // (하드코딩 수정?) 백엔드 - 프론트엔드 모두 사용가능한 도메인 설정 필요
+            .maxAge(jwtTokenProvider.getREFRESH_EXPIRATION()) // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
+            .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return new ApiResponse<>(HttpStatus.OK, "AccessToken & RefreshToken갱신 완료", null);
     }
