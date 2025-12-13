@@ -25,7 +25,7 @@ import urecagroup1backend.meeting_room.service.MeetingRoomService;
 public class MeetingRoomController implements MeetingRoomControllerDocs {
 
     private final MeetingRoomService meetingRoomService;
-    private final MeetingRoomLockService meetingRoomFacadeService;
+    private final MeetingRoomLockService meetingRoomLockService;
 
     @Override
     @GetMapping("/available")
@@ -40,7 +40,7 @@ public class MeetingRoomController implements MeetingRoomControllerDocs {
             @PathVariable Long meetingRoomId,
             Principal principal) {
         String email = principal.getName();
-        ReservationResponse response = meetingRoomFacadeService.enterReservationPage(meetingRoomId, email);
+        ReservationResponse response = meetingRoomLockService.enterReservationPage(meetingRoomId, email);
         return new ApiResponse<>(HttpStatus.CREATED, "예약 페이지 진입 성공", response);
     }
 

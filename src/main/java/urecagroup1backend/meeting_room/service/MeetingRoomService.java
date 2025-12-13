@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * @file MeetingRoomService
  * @author 최인호
- * @description 미팅룸 서비스
+ * @description 미팅룸 서비스 - 람다 기반 분산락 적용
  */
 
 @Service
@@ -34,7 +34,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;;
 
     public static final String MEETING_ROOM_STATUS_TOPIC = "meeting-room-status";
 
@@ -52,8 +52,8 @@ public class MeetingRoomService {
     }
 
     /**
-     * 회의실 예약 생성 (비즈니스 로직만 담당)
-     * 분산락은 MeetingRoomFacadeService에서 처리
+     * 회의실 예약 생성 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 enterReservationPage에서 처리
      */
     @Transactional
     @Caching(evict = {

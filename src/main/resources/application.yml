@@ -19,17 +19,17 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      # Kafka
-      kafka:
-        bootstrap-servers: localhost:9092 # 도커가 9092 포트를 열어줬으므로
-        consumer:
-          group-id: snack-order-group
-          auto-offset-reset: earliest
-          key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-          value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        producer:
-          key-serializer: org.apache.kafka.common.serialization.StringSerializer
-          value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # Kafka
+    kafka:
+      bootstrap-servers: localhost:9092 # 도커가 9092 포트를 열어줬으므로
+      consumer:
+        group-id: snack-order-group
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
   security:
     oauth2:

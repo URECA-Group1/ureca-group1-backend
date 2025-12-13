@@ -56,10 +56,10 @@ class MeetingRoomConcurrencyTest {
         // 의존성 수동 주입
         distributedLock = new DistributedLock(redissonClient);
         meetingRoomService = new MeetingRoomService(
-            meetingRoomRepository,
-            reservationRepository,
-            memberRepository,
-            redisTemplate
+                meetingRoomRepository,
+                reservationRepository,
+                memberRepository,
+                redisTemplate
         );
         meetingRoomFacadeService = new MeetingRoomLockService(distributedLock, meetingRoomService);
     }

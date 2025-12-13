@@ -56,7 +56,8 @@ class MeetingRoomCachePureJavaTest {
                 MeetingRoomRepository meetingRoomRepository,
                 MeetingRoomReservationRepository reservationRepository,
                 MemberRepository memberRepository,
-                RedisTemplate<String, Object> redisTemplate) {
+                RedisTemplate<String, Object> redisTemplate
+                 ) {
             return new MeetingRoomService(
                     meetingRoomRepository,
                     reservationRepository,

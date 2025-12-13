@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @file SeatService
+ * @description 좌석 서비스 - 람다 기반 분산락 적용
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -74,7 +78,10 @@ public class SeatService {
         return seatReservationResponseList;
     }
 
-    // 예약
+    /**
+     * 좌석 예약 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 tryReserveSeat에서 처리
+     */
     @Transactional
     public SeatReservationResponse reserveSeat(Long seatId, Long userId) {
         Seat seat = seatRepository.findById(seatId)
@@ -139,8 +146,10 @@ public class SeatService {
         return SeatReservationResponse.from(seatReservation);
     }
 
-
-    // 입실
+    /**
+     * 좌석 입실 (비즈니스 로직 - 내부 메서드)
+     * 분산락은 tryEnterSeat에서 처리
+     */
     @Transactional
     public SeatResponse enterSeat(Long seatId, Long userId) {
         Seat seat = seatRepository.findById(seatId)
