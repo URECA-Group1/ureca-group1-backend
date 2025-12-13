@@ -34,16 +34,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        logger.info("[log] AccessToken 검증 시작");
         // 1. JWT 토큰 추출
         String jwtToken = jwtTokenProvider.resolveToken(request);
+        logger.info("[log] Extracted Token: " + (jwtToken != null ? jwtToken.substring(0, 15) + "..." : "NULL")); // 👈 로그 추가 (전체 토큰은 길므로 일부만)
 
         try {
             if (jwtToken != null) {
                 // 2. 토큰 유효성 검증
                 // validateToken이 false를 반환하면 (e.g. 만료) 여기서 Authentication 설정하지 않음.
                 if (jwtTokenProvider.validateToken(jwtToken)) {
+                    logger.info("[log] Token Validation: SUCCESS");
                     // 3. 검증 성공 시, 인증 객체 생성 및 SecurityContext에 설정 (Principal: CustomUserDetails)
                     setAuthentication(jwtToken);
+                    logger.info("[log] SecurityContext Status: AUTHENTICATED");
+                }
+                else {
+                    logger.warn("[log] Token Validation: FAILED (Expired or Invalid Signature)"); // 👈 만료 시 로그
                 }
             }
 

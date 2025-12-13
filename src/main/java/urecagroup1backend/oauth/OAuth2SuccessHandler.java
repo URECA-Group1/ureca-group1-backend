@@ -5,11 +5,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.oauth.domain.CustomOAuth2User;
+import urecagroup1backend.oauth.service.AuthService;
 
 import java.io.IOException;
 
@@ -20,11 +23,22 @@ import java.io.IOException;
 @description 로그인 성공적으로 끝나면 호출되는 Handler
 */
 
-@RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
-    private final String URI = "/oauth2/success";
+    private final AuthService authService;
+    private final String redirectUrl;
+
+    public OAuth2SuccessHandler(
+            JwtTokenProvider jwtTokenProvider,
+            AuthService authService,
+            @Value("${app.front-redirect-url}") String redirectUrl) {
+
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authService = authService;
+        this.redirectUrl = redirectUrl;
+    }
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -32,31 +46,33 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // accessToken, refreshToken 발급
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
-        String refreshToken = jwtTokenProvider.createRefreshToken(authentication, accessToken);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        // 쿠키에 accessToken 담아서 전달
-        response.addCookie(createCookie("access", accessToken));
-        response.addCookie(createCookie("refresh", refreshToken));
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails customUser = (CustomUserDetails) authentication.getPrincipal();
+            Long memberId = customUser.getId();
 
-        // 리프레시 토큰 업데이트 필요
+            // Redis에 토큰 저장
+            authService.saveToken(memberId, accessToken, refreshToken);
+        }
 
-        // 하드코딩 수정 필요
-        String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000")
-                .build().toUriString();
+        // 헤더에 AccessToken
+        response.addCookie(createCookie("access", accessToken, jwtTokenProvider.getACCESS_EXPIRATION()));
+
+        // 쿠키에 refreshToken 전달
+        response.addCookie(createCookie("refresh", refreshToken, jwtTokenProvider.getREFRESH_EXPIRATION()));
 
         // 리다이렉트
         response.sendRedirect(redirectUrl);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createCookie(String key, String value, int expiration) {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
         // cookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
-        cookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
-        // cookie.setMaxAge(); // 만료시간 : AccessToken 유효기간과 동일하게 맞추기
+        // cookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
+        cookie.setMaxAge(expiration); // 만료시간 : Token 유효기간과 동일하게 맞추기
 
         return cookie;
-
-
     }
 }

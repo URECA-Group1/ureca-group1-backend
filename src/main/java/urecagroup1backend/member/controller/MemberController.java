@@ -1,5 +1,8 @@
 package urecagroup1backend.member.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,12 +16,14 @@ import urecagroup1backend.member.domain.SocialType;
 import urecagroup1backend.member.dto.MemberCreateDto;
 import urecagroup1backend.member.dto.MemberLoginDto;
 import urecagroup1backend.member.dto.RefreshTokenReqDto;
+import urecagroup1backend.member.dto.TokenResDto;
 import urecagroup1backend.member.service.MemberService;
 import urecagroup1backend.oauth.JwtTokenProvider;
 import urecagroup1backend.oauth.dto.AccessTokenDto;
 import urecagroup1backend.oauth.dto.GoogleProfileDto;
 import urecagroup1backend.oauth.dto.KakaoProfileDto;
 import urecagroup1backend.oauth.dto.RedirectDto;
+import urecagroup1backend.oauth.service.AuthService;
 import urecagroup1backend.oauth.service.GoogleService;
 import urecagroup1backend.oauth.service.KakaoService;
 
@@ -29,9 +34,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/members")
-public class MemberController {
+public class MemberController implements MemberControllerDocs {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
 //    private final GoogleService googleService;
 //    private final KakaoService kakaoService;
 
@@ -131,24 +137,32 @@ public class MemberController {
     // 로그아웃
     @PostMapping("/logout")
     public ApiResponse<?> logout(@AuthenticationPrincipal CustomUserDetails user) {
-        // memberService.logout 로직 구현
+        Long id = user.getId();
+
+        authService.logOut(id);
 
         return new ApiResponse<>(HttpStatus.OK, "로그아웃 성공", null);
     }
 
+
+    // 토큰 재발급
     @PostMapping("/token/refresh")
-    public ApiResponse<?> refreshToken(@RequestBody RefreshTokenReqDto refreshTokenReqDto) {
-        String oldRefreshToken = refreshTokenReqDto.getRefreshToken();
+    public ApiResponse<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtTokenProvider.resolveRefreshTokenFromCookie(request);
+        TokenResDto newToken = authService.reissueToken(refreshToken);
 
-        // AuthService 토큰 유효 확인 로직 구현
+        // 액세스 토큰은 헤더에
+        response.addHeader("Authorization", "Bearer " + newToken.getAccessToken());
 
-//
-//        if(!jwtTokenProvider.validateToken(oldRefreshToken)) {
-//            return new ApiResponse<>(HttpStatus.UNAUTHORIZED, "유효하지 않거나 만료된 Refresh Token입니다.", null);
-//        }
+        // 리프레시토큰은 쿠키에 넣어서 보내기
+        Cookie refreshCookie = new Cookie("refresh", newToken.getRefreshToken());
+        refreshCookie.setPath("/");
+        // refreshCookie.setSecure(true); // https 에서만 전송 (운영환경에서만)
+        // refreshCookie.setHttpOnly(true); // 클라이언트 속 JS 접근 불가 (XSS 방어)
+        refreshCookie.setMaxAge(jwtTokenProvider.getREFRESH_EXPIRATION()); // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
+        response.addCookie(refreshCookie);
 
-        // null 수정 필요
-        return new ApiResponse<>(HttpStatus.OK, "AccessToken 갱신 완료", null);
+        return new ApiResponse<>(HttpStatus.OK, "AccessToken & RefreshToken갱신 완료", newToken);
 
     }
 

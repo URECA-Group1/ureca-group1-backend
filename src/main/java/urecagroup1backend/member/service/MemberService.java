@@ -54,8 +54,7 @@ public class MemberService {
 
     // SocialID로 이미 회원가입 되어 있는지 확인
     public Member getMemberBySocialId(String socialId) {
-        Member member = memberRepository.findBySocialId(socialId).orElse(null);
-        return member;
+        return memberRepository.findBySocialId(socialId).orElse(null);
     }
 
     // 안씀
