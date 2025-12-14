@@ -176,19 +176,6 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // 쿠키에서 리프레시 토큰 추출 (토큰 재발급 시 사용)
-    public String resolveRefreshTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refresh".equals(cookie.getName())) { // 쿠키 이름 확인
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
     // 토큰 검증
     public boolean validateToken(String token) {
         if(!StringUtils.hasText(token)) {
