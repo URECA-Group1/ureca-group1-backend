@@ -15,6 +15,7 @@ public class CookieUtil {
     // 하드코딩된 값이라 바뀔 수도
     private static final String COOKIE_DOMAIN = ".urecastudycafe.store";
 
+    // request에서 쿠키 읽기
     public static Cookie getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -27,6 +28,7 @@ public class CookieUtil {
         return null;
     }
 
+    // request에서 쿠키 읽어서 string 변환 후 리턴
     public static String resolveCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -39,6 +41,8 @@ public class CookieUtil {
         return null;
     }
 
+    // 쿠키 생성
+    // sameSite 추가를 위해 ResponseCookie로 진행
     public static ResponseCookie createCookie(String key, String token, Boolean httpOnly, int maxAge) {
         return ResponseCookie.from(key, token)
                     .path("/")
@@ -50,6 +54,9 @@ public class CookieUtil {
                     .build();
     }
 
+    // 쿠키 삭제
+    // sameSite 추가를 위해 ResponseCookie로 진행
+    // maxAge(0)으로 쿠키 삭제
     public static ResponseCookie deleteCookie(String key, Boolean httpOnly) {
         return ResponseCookie.from(key, "")
                 .path("/")
