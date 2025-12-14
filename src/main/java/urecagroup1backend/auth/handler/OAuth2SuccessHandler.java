@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import urecagroup1backend.auth.provider.JwtTokenProvider;
+import urecagroup1backend.common.util.CookieUtil;
 import urecagroup1backend.member.domain.CustomUserDetails;
 import urecagroup1backend.auth.service.AuthService;
 
@@ -56,24 +57,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
         // 최초 로그인 시 (액세스 토큰, 리프레시 토큰) 모두 쿠키에 담아서 프론트에 전달 후,
-        // 프론트에서 쿠키에서 액세스 토큰 추출해 localStorage에 저장 후 쿠키에서 삭제하는 방법 선택
+        // 프론트에서 쿠키에서 액세스 토큰 추출해 localStorage에 저장 후 쿠키에서 삭제하는 방법 선택 (Header로 보내면 최초 로그인 시 읽을 수 없음)
 
-        // 액세스 토큰은 헤더에
-        response.addHeader("Authorization", "Bearer " + accessToken);
+        ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, 60);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
 
-        // 리프레시 토큰은 쿠키에 넣어서 보내기
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh", refreshToken)
-                .path("/")
-                .secure(true) // https 에서만 전송 (운영환경에서만)
-                .httpOnly(true) // 클라이언트 속 JS 접근 불가 (XSS 방어)
-                .sameSite("None") // 백엔드 - 프론트엔드 URL이 달라서 추가 필요함
-                .domain(".urecastudycafe.store/") // (하드코딩 수정?) 백엔드 - 프론트엔드 모두 사용가능한 도메인 설정 필요
-                .maxAge(jwtTokenProvider.getREFRESH_EXPIRATION()) // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
-                .build();
-
+        ResponseCookie refreshCookie = CookieUtil.createCookie("refresh", refreshToken, true, jwtTokenProvider.getREFRESH_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        // 리다이렉트
-        response.sendRedirect(redirectUrl);
+        // oauth callback 페이지로 리다이렉트
+        response.sendRedirect(redirectUrl + "/oauth/success");
     }
 }

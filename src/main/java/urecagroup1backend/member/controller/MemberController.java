@@ -1,6 +1,5 @@
 package urecagroup1backend.member.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import urecagroup1backend.common.util.CookieUtil;
 import urecagroup1backend.config.ApiResponse;
 import urecagroup1backend.member.controller.docs.MemberControllerDocs;
 import urecagroup1backend.member.domain.CustomUserDetails;
@@ -47,31 +47,31 @@ public class MemberController implements MemberControllerDocs {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ApiResponse<?> logout(@AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<?> logout(@AuthenticationPrincipal CustomUserDetails user, HttpServletResponse response) {
         Long id = user.getId();
         authService.logOut(id);
+
+        // 임시 액세스 토큰, 리프레시 토큰 모두 삭제
+        ResponseCookie deleteAccess = CookieUtil.deleteCookie("access", false);
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
+
+        ResponseCookie deleteRefresh = CookieUtil.deleteCookie("refresh", true);
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
+
         return new ApiResponse<>(HttpStatus.OK, "로그아웃 성공", null);
     }
 
     // 토큰 재발급
     @PostMapping("/token/refresh")
     public ApiResponse<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtTokenProvider.resolveRefreshTokenFromCookie(request);
+        String refreshToken = CookieUtil.resolveCookie(request, "refresh");
         TokenResDto newToken = authService.reissueToken(refreshToken);
 
         // 액세스 토큰은 헤더에
         response.addHeader("Authorization", "Bearer " + newToken.getAccessToken());
 
         // 리프레시 토큰은 쿠키에 넣어서 보내기
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh", newToken.getRefreshToken())
-            .path("/")
-            .secure(true) // https 에서만 전송 (운영환경에서만)
-            .httpOnly(true) // 클라이언트 속 JS 접근 불가 (XSS 방어)
-            .sameSite("None") // 백엔드 - 프론트엔드 URL이 달라서 추가 필요함
-            .domain(".urecastudycafe.store/") // (하드코딩 수정?) 백엔드 - 프론트엔드 모두 사용가능한 도메인 설정 필요
-            .maxAge(jwtTokenProvider.getREFRESH_EXPIRATION()) // 만료시간 : refreshToken 유효기간과 동일하게 맞추기
-            .build();
-
+        ResponseCookie refreshCookie = CookieUtil.createCookie("refresh", newToken.getRefreshToken(), true, jwtTokenProvider.getREFRESH_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return new ApiResponse<>(HttpStatus.OK, "AccessToken & RefreshToken갱신 완료", null);
