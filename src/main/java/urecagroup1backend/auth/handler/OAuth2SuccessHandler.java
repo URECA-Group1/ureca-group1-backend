@@ -63,7 +63,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 최초 로그인 시 (액세스 토큰, 리프레시 토큰) 모두 쿠키에 담아서 프론트에 전달 후,
         // 프론트에서 쿠키에서 액세스 토큰 추출해 localStorage에 저장 후 쿠키에서 삭제하는 방법 선택 (Header로 보내면 최초 로그인 시 읽을 수 없음)
 
-        ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, 60);
+        ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, jwtTokenProvider.getACCESS_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         log.info("[log] successHandler accessCookie = {}", accessCookie);
 
