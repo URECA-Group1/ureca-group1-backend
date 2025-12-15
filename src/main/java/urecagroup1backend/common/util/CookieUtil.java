@@ -43,15 +43,16 @@ public class CookieUtil {
 
     // 쿠키 생성
     // sameSite 추가를 위해 ResponseCookie로 진행
-    public static ResponseCookie createCookie(String key, String token, Boolean httpOnly, int maxAge) {
+    public static ResponseCookie createCookie(String key, String token, Boolean httpOnly, int maxAgeMinutes) {
+        long maxAgeSeconds = maxAgeMinutes * 60L;
         return ResponseCookie.from(key, token)
-                    .path("/")
-                    .domain(COOKIE_DOMAIN) // 임시 삭제
-                    .secure(true)
-                    .httpOnly(httpOnly)
-                    .sameSite("None")
-                    .maxAge(maxAge)
-                    .build();
+                .path("/")
+                .domain(COOKIE_DOMAIN) // 임시 삭제
+                .secure(true)
+                .httpOnly(httpOnly)
+                .sameSite("None")
+                .maxAge(maxAgeSeconds)
+                .build();
     }
 
     // 쿠키 삭제
