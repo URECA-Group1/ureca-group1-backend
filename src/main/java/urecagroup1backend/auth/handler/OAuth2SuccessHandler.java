@@ -61,6 +61,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, 60);
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        System.out.println("accessCookie = " + accessCookie);
 
         ResponseCookie refreshCookie = CookieUtil.createCookie("refresh", refreshToken, true, jwtTokenProvider.getREFRESH_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
