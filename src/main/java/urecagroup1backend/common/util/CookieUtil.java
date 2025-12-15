@@ -46,9 +46,9 @@ public class CookieUtil {
     public static ResponseCookie createCookie(String key, String token, Boolean httpOnly, int maxAge) {
         return ResponseCookie.from(key, token)
                     .path("/")
-                    .domain(COOKIE_DOMAIN) // 임시 삭제
+                    //.domain(COOKIE_DOMAIN) // 임시 삭제
                     .secure(true)
-                    .httpOnly(httpOnly)
+                    //.httpOnly(httpOnly)
                     .sameSite("None")
                     .maxAge(maxAge)
                     .build();
@@ -60,9 +60,9 @@ public class CookieUtil {
     public static ResponseCookie deleteCookie(String key, Boolean httpOnly) {
         return ResponseCookie.from(key, "")
                 .path("/")
-                .domain(COOKIE_DOMAIN) // 임시 삭제
+                //.domain(COOKIE_DOMAIN) // 임시 삭제
                 .secure(true)
-                .httpOnly(httpOnly)
+                //.httpOnly(httpOnly)
                 .sameSite("None")
                 .maxAge(0)
                 .build();
