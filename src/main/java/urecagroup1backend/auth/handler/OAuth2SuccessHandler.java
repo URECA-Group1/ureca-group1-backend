@@ -45,6 +45,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
+
+        log.info("[log] SuccessHandler onAuthenticationSuccess 진입");
         // accessToken, refreshToken 발급
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
@@ -63,12 +65,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, 60);
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        log.info("accessCookie = {}", accessCookie);
+        log.info("[log] successHandler accessCookie = {}", accessCookie);
 
         ResponseCookie refreshCookie = CookieUtil.createCookie("refresh", refreshToken, true, jwtTokenProvider.getREFRESH_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        log.info("[log] successHandler refreshCookie = {}", refreshCookie);
 
         // oauth callback 페이지로 리다이렉트
         response.sendRedirect(redirectUrl + "/oauth/success");
+
+        log.info("[log] SuccessHandler redirect 성공");
     }
 }
