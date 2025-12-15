@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -25,6 +26,7 @@ import java.io.IOException;
 */
 
 @Component
+@Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
@@ -61,7 +63,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         ResponseCookie accessCookie = CookieUtil.createCookie("access", accessToken, false, 60);
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        System.out.println("accessCookie = " + accessCookie);
+        log.info("accessCookie = {}", accessCookie);
 
         ResponseCookie refreshCookie = CookieUtil.createCookie("refresh", refreshToken, true, jwtTokenProvider.getREFRESH_EXPIRATION());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
