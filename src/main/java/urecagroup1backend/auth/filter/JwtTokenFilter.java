@@ -29,10 +29,11 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
-    //
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+
+        log.info("[log] shouldNotFilter: {}", path);
 
         return path.startsWith("/oauth2/")
                 || path.startsWith("/login/oauth2/")
