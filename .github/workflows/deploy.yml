@@ -3,14 +3,13 @@ name: Deploy to Amazon EC2
 on:
   push:
     branches:
-      - develop  # 또는 master (본인 브랜치명 확인)
+      - develop
 
-# 본인 설정으로 수정 필요!
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: urecagroup1-build     # 아까 만든 S3 버킷 이름
-  CODE_DEPLOY_APPLICATION_NAME: urecagroup1-deploy   # CodeDeploy 애플리케이션 이름
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: urecagroup1-deploy-group # CodeDeploy 배포 그룹 이름
+  S3_BUCKET_NAME: urecagroup1-build             # S3 버킷 이름
+  CODE_DEPLOY_APPLICATION_NAME: urecagroup1-deploy     # CodeDeploy 앱 이름
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: urecagroup1-deploy-group # 배포 그룹 이름
 
 permissions:
   contents: read
@@ -26,21 +25,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # (2) JDK 17 세팅 (프로젝트 버전에 맞게 수정: 11, 17, 21 등)
+      # (2) JDK 17 세팅
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # (3) Gradle 빌드 (실행 권한 부여 후 빌드)
+      # (3) Gradle 빌드
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-      # (4) AWS 인증 (GitHub Secrets 사용)
+      # (4) AWS 인증 (GitHub Secrets)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -48,17 +47,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # (5) 배포 파일 압축 (Jar + appspec.yml + scripts)
-      # 필요한 파일들만 모아서 zip으로 만듭니다.
       - name: Make zip file
-        run: zip -r ./practice-deploy.zip . -x ".*" "**/test/**" "**/target/**"
+        run: |
+          mkdir -p deploy                  # 1. 임시 폴더 생성
+          cp build/libs/*.jar deploy/      # 2. 빌드된 Jar 파일 복사
+          cp appspec.yml deploy/           # 3. 배포 설정 파일 복사
+          cp -r scripts deploy/            # 4. 스크립트 폴더 통째로 복사
+          cd deploy                        # 5. 폴더 안으로 이동 (중요!)
+          zip -r ../practice-deploy.zip .  # 6. 압축 (상위 폴더에 생성)
         shell: bash
 
       # (6) S3에 업로드
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./practice-deploy.zip s3://$S3_BUCKET_NAME/
 
-      # (7) CodeDeploy에게 배포 명령
+      # (7) CodeDeploy에게 배포 명령 (S3에 있는 걸 가져가라고 지시)
       - name: Code Deploy
         run: >
           aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }}
